@@ -1,0 +1,59 @@
+@import "~bootstrap/scss/bootstrap";
+
+html,
+body {
+	// Size of the menu
+  width: 140px;
+	// White text dark background
+  background: rgb(21, 20, 26);
+  color: rgb(234, 234, 234);
+  font-family: "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.header {
+	// Make the header and settings gear display on the same line
+  display: flex;
+  justify-content: space-between;
+
+	// Touch up to align the header
+  padding: 5px 0;
+
+  h1 {
+    font-size: 10pt;
+    margin: 0;
+		// Vertically center the header
+    display: flex;
+    align-items: center;
+  }
+}
+
+button {
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1.5em;
+  cursor: pointer;
+
+  &.vote {
+    width: 100%;
+    margin: 3% auto;
+    padding-top: 7px;
+    background-color: rgb(39, 39, 44);
+  }
+
+  &.settings {
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+		padding: 4px;
+  }
+
+  &:hover {
+    background-color: rgb(51, 49, 60);
+  }
+
+  &:active {
+    background-color: rgb(75, 74, 85);
+  }
+}
