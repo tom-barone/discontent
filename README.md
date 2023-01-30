@@ -46,8 +46,8 @@ You can change the good / spicy / bad emojis in the settings to something custom
 
 ## Technical
 
-The web extension itself is written in Typescript and built with Webpack. When you load a page, it'll grab a list of all the relevant links on the page, then hit a web API asking for their scores.
+The extension itself is written in Typescript. When you load a page, it'll grab a list of all the relevant links on the page, then hit a web API asking for their scores.
 
 The web API runs off server-less AWS lambdas built in Rust, and the whole thing is backed by DynamoDB.
 
-For the nuts and bolts, see the [Architecture](./docs/architecture.md) doc.
+For the nuts and bolts, see the [Architecture](./docs/architecture.md) page.

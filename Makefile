@@ -7,24 +7,25 @@ endif
 # Primary targets
 
 install:
-	npm install
+	cd extension && npm install
 
 dev: guard-NODE_ENV build
 	make -j 2 dev-webpack-watch dev-web-extension
 
 build: guard-NODE_ENV clean install
-	npx webpack
+	cd extension && npx webpack
 
 clean:
-	rm -rf dist
+	rm -rf extension/dist
 
 # Secondary targets
 
 dev-webpack-watch: guard-NODE_ENV
-	npx webpack --watch
+	cd extension && npx webpack --watch
 
 dev-web-extension:
-	cd dist && npx web-ext run --start-url https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter about:debugging
+	# Open up firefox with the extension loaded and two tabs that are helpful for development
+	cd extension/dist && npx web-ext run --start-url https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter about:debugging
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards
