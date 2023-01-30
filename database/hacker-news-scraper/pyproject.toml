@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "hacker-news-scraper"
+version = "0.1.0"
+description = "Scrapes posts from Hacker News for links and votes"
+authors = ["Tom Barone <mail@tombarone.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fire = "^0.5.0"
+requests = "^2.28.2"
+beautifulsoup4 = "^4.11.1"
+tqdm = "^4.64.1"
+fake-useragent = "^1.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

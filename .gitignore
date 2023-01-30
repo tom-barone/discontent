@@ -1,3 +1,5 @@
 .env
-extension/dist/
-extension/node_modules/
+dist/
+node_modules/
+output/
+__pycache__/
