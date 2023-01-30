@@ -19,17 +19,14 @@ An `Integer` that's either a +1 or -1. Usually stored in a `Tuple` along with th
 
 An `enum` that represents how good a website `Link` is. It has 4 possible values:
 
-1. `Good`
-1. `Bad`
-1. `Controversial`
-1. `NoScore`
+| Enum            | Definition                                              |
+| --------------- | ------------------------------------------------------- |
+| `Good`          | Sum of all votes >= 10                                  |
+| `Bad`           | Sum of all votes <= -10                                 |
+| `Controversial` | (-10 < Sum of all votes < 10) && (Number of votes > 10) |
+| `NoScore`       | If none of the above                                    |
 
-The score for a `Link` is calculated in the API and exposed to the extension through the `/scores` request. The definition is:
-
-- `Good` = Sum of all votes >= 10
-- `Bad` = Sum of all votes <= -10
-- `Controversial` = -10 < Sum of all votes < 10 && Number of votes > 10
-- `NoScore` = None of the above
+The score is calculated in the API and exposed to the extension through the `/scores` request.
 
 ### Users Collection
 
