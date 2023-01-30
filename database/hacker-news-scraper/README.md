@@ -2,7 +2,7 @@
 
 This simple python script scrapes the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news) and gets the links & upvotes.
 
-Seemed like a good starting point for the ContentBlock database.
+Seemed like a good starting point for the Discontent database.
 
 ## Requirements
 

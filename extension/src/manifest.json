@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "ContentBlock",
+  "name": "Discontent",
   "version": "1.0",
   "description": "Decorate links that are garbage",
   "icons": {
@@ -11,7 +11,7 @@
   ],
   "browser_action": {
     "default_icon": "icons/green_heart.png",
-    "default_title": "ContentBlock",
+    "default_title": "Discontent",
     "default_popup": "menu/menu.html"
   },
   "content_scripts": [

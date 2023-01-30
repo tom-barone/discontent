@@ -1,4 +1,4 @@
-# 💚 ContentBlock
+# 💚 Discontent
 
 # WORK IN PROGRESS
 
@@ -32,7 +32,7 @@ There is already some excellent work in progress that tries to identify automati
 
 Historically we relied on the big search engines to filter out the good from the bad, and generally speaking they did a pretty good job. But all this generative AI stuff has them spooked and I'm noticing I now have to wade through a lot of rubbish to find anything half decent.
 
-As an aside, rating platforms become useless when they start accepting money in exchange for ratings. My promise is that ContentBlock will never do this, so don't bother asking.
+As an aside, rating platforms become useless when they start accepting money in exchange for ratings. My promise is that Discontent will never do this, so don't bother asking.
 
 ## Configuration
 

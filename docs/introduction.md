@@ -1,6 +1,6 @@
 Hello friend 💚
 
-Welcome to ContentBlock.
+Welcome to Discontent.
 
 The vision of this community is to filter out unhelpful content on the web, and to make it easier to find the good stuff.
 

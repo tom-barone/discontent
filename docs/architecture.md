@@ -9,7 +9,7 @@ A `String` of the domain that represents the website, for example `"www.google.c
 [See here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) for a good explanation of the different pieces in the URL:
 <br/><img height=70 src="../docs/assets/URL_description.png" alt="Structure and components of a URL"></img>
 
-_Right now all voting just happens on the domain, but there could be a future where ContentBlock allows voting on individual paths underneath the domain. This would allow voting on individual articles on Medium for example._
+_Right now all voting just happens on the domain, but there could be a future where Discontent allows voting on individual paths underneath the domain. This would allow voting on individual articles on Medium for example._
 
 ### Vote
 
@@ -59,7 +59,7 @@ The score for a `Link` is calculated in the API and exposed to the extension thr
 I decided to go with a NoSQL database for two reasons:
 
 1. It'd be cool to learn
-1. My extremely basic understanding of NoSQL leads me to believe that it's better suited for what ContentBlock is trying to do.
+1. My extremely basic understanding of NoSQL leads me to believe that it's better suited for what Discontent is trying to do.
    DynamoDB on AWS seems cheap enough and if this extension actually gets used and needs to scale then future Tom won't be boned.
 
 The access patterns are pretty well defined:
@@ -75,7 +75,7 @@ The access patterns are pretty well defined:
 | Get users by number of votes                 | To do analyses on possible abuse, best voters... |
 | Get list of vote timestamps for a given user | To check they aren't abusing the system          |
 
-Future versions of ContentBlock might want to support:
+Future versions of Discontent might want to support:
 
 | Version 2 Access Patterns               | Description                            |
 | --------------------------------------- | -------------------------------------- |

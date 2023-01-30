@@ -1,16 +1,16 @@
 {
-  "name": "Contentblock",
+  "name": "Discontent",
   "version": "1.0.0",
   "description": "Open source browser extension to fight garbage content on the web.",
   "author": "Tom Barone",
   "license": "GPL-3.0",
-  "homepage": "https://github.com/tom-barone/ContentBlock",
+  "homepage": "https://github.com/tom-barone/Discontent",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/tom-barone/ContentBlock.git"
+    "url": "git+https://github.com/tom-barone/Discontent.git"
   },
   "bugs": {
-    "url": "https://github.com/tom-barone/ContentBlock/issues"
+    "url": "https://github.com/tom-barone/Discontent/issues"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
