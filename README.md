@@ -22,7 +22,9 @@ Inspired by my *deep hate*💢 for those AI customer support bots.
 
 When a website has some terrible content and you want to make sure your next fellow human doesn't waste their time, hit the 💢 button in the extension. Alternatively if it's great, show your love by hitting the 💚.
 
-Works for Google, Bing & DuckDuckGo.
+To get things off the ground, I've used the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news). I've gone back a year in time and taken the best 30 from each day, hopefully that's a good starting point.
+
+Works for Google, Bing & DuckDuckGo. Would be cool to get it working generally for all outbound links everywhere.
 
 ## Motivation
 
@@ -46,4 +48,6 @@ You can change the good / spicy / bad emojis in the settings to something custom
 
 The web extension itself is written in Typescript and built with Webpack. When you load a page, it'll grab a list of all the relevant links on the page, then hit a web API asking for their scores.
 
-The web API runs off serverless AWS lambdas built in Rust, and the whole thing is backed by DynamoDB.
+The web API runs off server-less AWS lambdas built in Rust, and the whole thing is backed by DynamoDB.
+
+For the nuts and bolts, see the [Architecture](./docs/architecture.md) doc.
