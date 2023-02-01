@@ -62,11 +62,13 @@ def hacker_news_scraper(start_date: str, end_date: str):
     Scrapes links and updates from front page submissions on Hacker News.
     Saves csv results to ./output/submissions_<start_date>_<end_date>.csv
 
-    Example usage: hacker_news_scraper.py --start_date=2023-01-10 --end_date=2023-01-20
+    Example usage: 
+    hacker_news_scraper.py --start_date=2023-01-10 --end_date=2023-01-20
     """
     # Parse dates and prepare output
-    start = datetime.strptime(start_date, '%Y-%m-%d')
-    end = datetime.strptime(end_date, '%Y-%m-%d')
+    FORMAT = '%Y-%m-%d'
+    start = datetime.strptime(start_date, FORMAT)
+    end = datetime.strptime(end_date, FORMAT)
     os.makedirs('output', exist_ok=True)
     ua = UserAgent()
 
@@ -76,7 +78,7 @@ def hacker_news_scraper(start_date: str, end_date: str):
         writer = csv.writer(f, dialect='unix')
         progress = tqdm(date_range(start, end))
         for day in progress:
-            day_string = day.strftime('%Y-%m-%d')
+            day_string = day.strftime(FORMAT)
             progress.set_description(f"Scraping {day_string}")
             # Sorry
             headers = {'User-Agent': ua.random}
@@ -89,9 +91,8 @@ def hacker_news_scraper(start_date: str, end_date: str):
                 for submission in submissions:
                     writer.writerow([day_string, submission[0], submission[1]])
             else:
-                print(
-                    f"\nError: {day_string} failed with {r.status_code} {r.reason}"
-                )
+                print(f"\nError: {day_string} failed with "
+                      "{r.status_code} {r.reason}")
 
     return
 
