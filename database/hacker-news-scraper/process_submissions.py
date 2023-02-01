@@ -14,6 +14,7 @@ def process_submissions(input_files):
     1. Read the CSV and merge them into a single pandas DataFrame
     2. Map all the urls to just the domain part
     3. Combine duplicate submissions and sum their votes (drop the date column)
+    4. Scale the votes so we get results between 20 & 1000
     4. Output the results to a CSV
 
     Example usage:
@@ -34,6 +35,14 @@ def process_submissions(input_files):
     # Step 3
     df = df.groupby(['link'])['votes'].sum().to_frame()
     df = df.sort_values(by='votes', ascending=False)
+
+    # Step 4
+    new_min = 20
+    new_max = 1000
+    current_min = df['votes'].min()
+    current_max = df['votes'].max()
+    df['scaled_votes'] = ((new_max - new_min) * (df['votes'] - current_min) / (
+        current_max - current_min) + new_min).astype(int)
 
     # Step 4
     df.to_csv('output/processed_submissions.csv', quoting=csv.QUOTE_ALL)

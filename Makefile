@@ -35,6 +35,10 @@ get-hacker-news-submissions: install
 	# Used to give a good starting point for the scores database
 	cd database/hacker-news-scraper && poetry run python hacker_news_scraper.py --start_date=2023-01-13 --end_date=2023-01-29
 
+process-hacker-news-submissions: install
+	# Used to give a good starting point for the scores database
+	cd database/hacker-news-scraper && poetry run python process_submissions.py --input_files "output/submissions_*.csv"
+
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards
 guard-%:
