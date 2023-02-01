@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "hacker-news-scraper"
+name = "initialiser"
 version = "0.1.0"
-description = "Scrapes posts from Hacker News for links and votes"
+description = "Scrapes posts from Hacker News for links and votes, and processes them"
 authors = ["Tom Barone <mail@tombarone.net>"]
 readme = "README.md"
 

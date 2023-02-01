@@ -8,7 +8,7 @@ endif
 
 install:
 	cd extension && npm install
-	cd database/hacker-news-scraper && poetry install
+	cd database/initialiser && poetry install
 
 dev: guard-NODE_ENV build
 	make -j 2 dev-webpack-watch dev-web-extension
@@ -20,7 +20,7 @@ clean:
 	rm -rf extension/dist
 
 test: install
-	cd database/hacker-news-scraper && poetry run python -m unittest discover
+	cd database/initialiser && poetry run python -m unittest discover
 
 # Secondary targets
 
@@ -33,11 +33,11 @@ dev-web-extension:
 
 get-hacker-news-submissions: install
 	# Used to give a good starting point for the scores database
-	cd database/hacker-news-scraper && poetry run python hacker_news_scraper.py --start_date=2023-01-13 --end_date=2023-01-29
+	cd database/initialiser && poetry run python hacker_news_scraper.py --start_date=2023-01-13 --end_date=2023-01-29
 
 process-hacker-news-submissions: install
 	# Used to give a good starting point for the scores database
-	cd database/hacker-news-scraper && poetry run python process_submissions.py --input_files "output/submissions_*.csv"
+	cd database/initialiser && poetry run python process_submissions.py --input_files "output/submissions_*.csv"
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards
