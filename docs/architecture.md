@@ -56,8 +56,6 @@ _TODO: Link to a swagger page._
 | `POST /vote {link:<Link>, vote:<Vote>}`                               |                                | Public                                |
 | `POST /admin/vote {link:<Link>, vote:<Vote>, timestamp: <Timestamp>}` |                                | Admin only, used for database seeding |
 
-The APIs
-
 ## Database
 
 I decided to go with a NoSQL database for two reasons:

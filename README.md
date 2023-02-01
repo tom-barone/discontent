@@ -10,7 +10,7 @@ As of writing, if I type `difference between reddit and twitter` into [Google](h
 
 Alright, this website is complete trash. The example is a bit contrived I'll admit, but I know there's better results out there, written by people who produce interesting and quality content. Unfortunately with the advent of AI tools like ChatGPT, this sort of nonsense is only going to increase. Use this extension to fight back.
 
-Inspired by my *deep hate*💢 for those AI customer support bots.
+Inspired by my *deep hate*💢 of those AI customer support bots.
 
 ## How it works?
 
