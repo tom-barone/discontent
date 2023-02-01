@@ -1,0 +1,445 @@
+{
+  "ModelName": "Discontent Data Model",
+  "ModelMetadata": {
+    "Author": "",
+    "DateCreated": "Feb 01, 2023, 10:42 AM",
+    "DateLastModified": "Feb 01, 2023, 04:28 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "3.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "Discontent",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "entityType",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "countOfVotes",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "sumOfVotes",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "voteValue",
+          "AttributeType": "N"
+        },
+        {
+          "AttributeName": "voteTimestamp",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "userNotes",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "banned",
+          "AttributeType": "BOOL"
+        },
+        {
+          "AttributeName": "UserVotes_PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DailyUserHistory_PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "DailyLinkHistory_PK",
+          "AttributeType": "S"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "UserVotes",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "UserVotes_PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "voteTimestamp",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "entityType",
+              "voteValue",
+              "PK"
+            ]
+          }
+        },
+        {
+          "IndexName": "DailyUserHistory",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "DailyUserHistory_PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "countOfVotes",
+              "AttributeType": "N"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "entityType",
+              "SK",
+              "sumOfVotes"
+            ]
+          }
+        },
+        {
+          "IndexName": "DailyLinkHistoryByCountOfVotes",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "DailyLinkHistory_PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "countOfVotes",
+              "AttributeType": "N"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "entityType",
+              "SK",
+              "sumOfVotes"
+            ]
+          }
+        },
+        {
+          "IndexName": "DailyLinkHistoryBySumOfVotes",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "DailyLinkHistory_PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "sumOfVotes",
+              "AttributeType": "N"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": [
+              "entityType",
+              "SK",
+              "countOfVotes"
+            ]
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "link#www.wikipedia.org"
+          },
+          "SK": {
+            "S": "link#www.wikipedia.org"
+          },
+          "entityType": {
+            "S": "Link"
+          },
+          "countOfVotes": {
+            "N": "2"
+          },
+          "sumOfVotes": {
+            "N": "2"
+          }
+        },
+        {
+          "PK": {
+            "S": "link#www.wikipedia.org"
+          },
+          "SK": {
+            "S": "user#john"
+          },
+          "entityType": {
+            "S": "Vote"
+          },
+          "voteValue": {
+            "N": "1"
+          },
+          "voteTimestamp": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "UserVotes_PK": {
+            "S": "john"
+          }
+        },
+        {
+          "PK": {
+            "S": "link#www.wikipedia.org"
+          },
+          "SK": {
+            "S": "user#jeff"
+          },
+          "entityType": {
+            "S": "Vote"
+          },
+          "voteValue": {
+            "N": "1"
+          },
+          "voteTimestamp": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "UserVotes_PK": {
+            "S": "jeff"
+          }
+        },
+        {
+          "PK": {
+            "S": "link#www.google.com"
+          },
+          "SK": {
+            "S": "link#www.google.com"
+          },
+          "entityType": {
+            "S": "Link"
+          },
+          "countOfVotes": {
+            "N": "2"
+          },
+          "sumOfVotes": {
+            "N": "0"
+          }
+        },
+        {
+          "PK": {
+            "S": "link#www.google.com"
+          },
+          "SK": {
+            "S": "user#john"
+          },
+          "entityType": {
+            "S": "Vote"
+          },
+          "voteValue": {
+            "N": "1"
+          },
+          "voteTimestamp": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "UserVotes_PK": {
+            "S": "john"
+          }
+        },
+        {
+          "PK": {
+            "S": "link#www.google.com"
+          },
+          "SK": {
+            "S": "user#steve"
+          },
+          "entityType": {
+            "S": "Vote"
+          },
+          "voteValue": {
+            "N": "-1"
+          },
+          "voteTimestamp": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "UserVotes_PK": {
+            "S": "steve"
+          }
+        },
+        {
+          "PK": {
+            "S": "user#jeff"
+          },
+          "SK": {
+            "S": "user#jeff"
+          },
+          "entityType": {
+            "S": "User"
+          },
+          "banned": {
+            "BOOL": false
+          }
+        },
+        {
+          "PK": {
+            "S": "user#john"
+          },
+          "SK": {
+            "S": "user#john"
+          },
+          "entityType": {
+            "S": "User"
+          },
+          "userNotes": {
+            "S": "Initial HackerNews seed"
+          },
+          "banned": {
+            "BOOL": false
+          }
+        },
+        {
+          "PK": {
+            "S": "user#steve"
+          },
+          "SK": {
+            "S": "user#steve"
+          },
+          "entityType": {
+            "S": "User"
+          },
+          "banned": {
+            "BOOL": false
+          }
+        },
+        {
+          "PK": {
+            "S": "day#2023-01-10"
+          },
+          "SK": {
+            "S": "user#john"
+          },
+          "entityType": {
+            "S": "UserHistory"
+          },
+          "countOfVotes": {
+            "N": "22"
+          },
+          "sumOfVotes": {
+            "N": "20"
+          },
+          "DailyUserHistory_PK": {
+            "S": "2023-01-10"
+          }
+        },
+        {
+          "PK": {
+            "S": "day#2023-01-10"
+          },
+          "SK": {
+            "S": "user#jeff"
+          },
+          "entityType": {
+            "S": "UserHistory"
+          },
+          "countOfVotes": {
+            "N": "12"
+          },
+          "sumOfVotes": {
+            "N": "2"
+          },
+          "DailyUserHistory_PK": {
+            "S": "2023-01-10"
+          }
+        },
+        {
+          "PK": {
+            "S": "day#2023-01-10"
+          },
+          "SK": {
+            "S": "user#steve"
+          },
+          "entityType": {
+            "S": "UserHistory"
+          },
+          "countOfVotes": {
+            "N": "1"
+          },
+          "sumOfVotes": {
+            "N": "-1"
+          },
+          "DailyUserHistory_PK": {
+            "S": "2023-01-10"
+          }
+        },
+        {
+          "PK": {
+            "S": "day#2023-01-10"
+          },
+          "SK": {
+            "S": "link#www.wikipedia.org"
+          },
+          "entityType": {
+            "S": "LinkHistory"
+          },
+          "countOfVotes": {
+            "N": "20"
+          },
+          "sumOfVotes": {
+            "N": "10"
+          },
+          "DailyLinkHistory_PK": {
+            "S": "2023-01-10"
+          }
+        },
+        {
+          "PK": {
+            "S": "day#2023-01-10"
+          },
+          "SK": {
+            "S": "link#www.google.com"
+          },
+          "entityType": {
+            "S": "LinkHistory"
+          },
+          "countOfVotes": {
+            "N": "10"
+          },
+          "sumOfVotes": {
+            "N": "-10"
+          },
+          "DailyLinkHistory_PK": {
+            "S": "2023-01-10"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      },
+      "BillingMode": "PROVISIONED",
+      "ProvisionedCapacitySettings": {
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "AutoScalingRead": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        },
+        "AutoScalingWrite": {
+          "ScalableTargetRequest": {
+            "MinCapacity": 1,
+            "MaxCapacity": 10,
+            "ServiceRole": "AWSServiceRoleForApplicationAutoScaling_DynamoDBTable"
+          },
+          "ScalingPolicyConfiguration": {
+            "TargetValue": 70
+          }
+        }
+      }
+    }
+  ]
+}

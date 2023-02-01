@@ -2,6 +2,14 @@
 
 ## Data Structures
 
+```mermaid
+%%{ init: { "er" : { "layoutDirection" : "LR" } } }%%
+erDiagram
+    User ||--o{ Vote : submits
+    Vote o{--|| Link : on
+    Link o{--|| Score : has
+```
+
 ### Link
 
 A `String` of the domain that represents the website, for example `"www.google.com" or "blog.myspecialplace.com"`.
@@ -9,11 +17,11 @@ A `String` of the domain that represents the website, for example `"www.google.c
 [See here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) for a good explanation of the different pieces in the URL:
 <br/><img height=70 src="../docs/assets/URL_description.png" alt="Structure and components of a URL"></img>
 
-_Right now all voting just happens on the domain, but there could be a future where Discontent allows voting on individual paths underneath the domain. This would allow voting on individual articles on Medium for example._
+_Right now all voting just happens on the domain, but there could be a future where Discontent allows voting on paths underneath the domain. This mean being able to vote on individual Medium articles for example._
 
 ### Vote
 
-An `Integer` that's either a +1 or -1. Usually stored in a `Tuple` along with the timestamp when the vote was made `Tuple(Vote, Timestamp)`
+An `Integer` that's either a +1 or -1. Sum all votes to get the `Score` of a `Link`.
 
 ### Score
 
@@ -28,54 +36,129 @@ An `enum` that represents how good a website `Link` is. It has 4 possible values
 
 The score is calculated in the API and exposed to the extension through the `/scores` request.
 
-### Users Collection
+### User
 
-| Property | Type                                 | Default               | Description                              |
-| -------- | ------------------------------------ | --------------------- | ---------------------------------------- |
-| `userId` | `UUID` (Primary Key)                 | <generated_by_client> | Login key for every user. Don't share it |
-| `votes`  | `Hash<Link, Tuple(Vote, Timestamp)>` |                       |                                          |
+Identified by a `UUID`. I wanted a passwordless system and this seemed like a flexible choice. Has a number of properties:
 
-### Links Collection
+- userNotes: `String`
+- banned: `Boolean`
 
-| Property        | Type                                     | Default | Description |
-| --------------- | ---------------------------------------- | ------- | ----------- |
-| `link`          | `Link` (Primary Key)                     |         |             |
-| `numberOfVotes` | `Integer`                                | 0       |             |
-| `sumOfVotes`    | `Integer`                                | 0       |             |
-| `voters`        | `Hash<UserUUID, Tuple(Vote, Timestamp)>` | Empty   |             |
+Only one `Vote` can be submitted per `User` per `Link`.
 
 ## API
 
-| Request                                               | Response                   |
-| ----------------------------------------------------- | -------------------------- |
-| `GET /scores?links=<JSON stringified array of links>` | `Array<Tuple(Link,Score)>` |
-| `POST /vote?link=<Link>&user=<UUID>&vote=<Vote>`      |                            |
+_TODO: Link to a swagger page._
+
+| Request                                               | Auth header   | Response                       |
+| ----------------------------------------------------- | ------------- | ------------------------------ |
+| `GET /scores?links=<JSON stringified array of links>` | `<User_UUID>` | `[{link: Link, score: Score}]` |
+| `GET /vote?link=<Link>`                               | `<User_UUID>` | `Vote`                         |
+| `POST /vote?link=<Link>&vote=<Vote>`                  | `<User_UUID>` |                                |
 
 ## Database
 
 I decided to go with a NoSQL database for two reasons:
 
-1. It'd be cool to learn
+1. It'd be cool to learn.
 1. My extremely basic understanding of NoSQL leads me to believe that it's better suited for what Discontent is trying to do.
    DynamoDB on AWS seems cheap enough and if this extension actually gets used and needs to scale then future Tom won't be boned.
 
-The access patterns are pretty well defined:
+The access patterns are reasonably well defined:
 
-| Version 1 Access Patterns                    | Description                                      |
-| -------------------------------------------- | ------------------------------------------------ |
-|                                              |                                                  |
-| Get the score for a given hostname           |                                                  |
-| Delete a user and undo all their votes       |                                                  |
-| Create a user vote for a given hostname      | When a vote button is clicked                    |
-| Update a user vote for a given hostname      | When a vote button is clicked again              |
-| Get top hostnames by score                   | To create a leaderboard of the best hostnames    |
-| Get users by number of votes                 | To do analyses on possible abuse, best voters... |
-| Get list of vote timestamps for a given user | To check they aren't abusing the system          |
+| Runtime Access Patterns       | Description                                        | Table - Filter                                            |
+| ----------------------------- | -------------------------------------------------- | --------------------------------------------------------- |
+| Get vote summaries for a Link | Summaries are `sumOfVotes` & `numberOfVotes`       | `Table:Discontent - PK=link#<link>, SK=link#<link>`       |
+| Get all votes for a Link      | To calculate `sumOfVotes` & `numberOfVotes`        | `Table:Discontent - PK=link#<link>, SK.startswith(user#)` |
+| Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
+| Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
+| Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<userId>`      |
+| Get banned state for a User   | Prevent banned users from submitting more votes    | `Table:Discontent - PK=user#<userId>, SK=user#<userId>`   |
 
-Future versions of Discontent might want to support:
+The following are analysis access patterns, not really part of regular usage.
 
-| Version 2 Access Patterns               | Description                            |
-| --------------------------------------- | -------------------------------------- |
-|                                         |                                        |
-| Read a user vote for a given hostname   | To auto select the correct vote button |
-| Delete a user vote for a given hostname | When a vote button is deselected       |
+| Analysis Access Patterns              | Description                                 | Table & Filter                                             |
+| ------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
+| Get User details                      | To carry out abuse investigations           | `Table:Discontent - PK=user#<userId>, SK=user#<userId>,`   |
+| Get all votes for a user              | To carry out abuse investigations           | `GSI:UserVotes - PK=user#<userId>, SK.within(timerange)`   |
+| Get top users by daily count of votes | To identify possible abuse                  | `GSI:DailyUserHistory - PK=<day>, SK.top(N)`               |
+| Get top links by daily count of votes | To identify possible abuse                  | `GSI:DailyLinkHistoryByCountOfVotes - PK=<day>, SK.top(N)` |
+| Get top links by daily sum of votes   | To create a best links leaderboard          | `GSI:DailyLinkHistoryBySumOfVotes - PK=<day>, SK.top(N)`   |
+| Get top links by daily count of votes | To create a controversial links leaderboard | `GSI:DailyLinkHistoryByCountOfVotes - PK=<day>, SK.top(N)` |
+
+### Schema visualisations
+
+_TODO: Add images from the NoSQL workbench_
+
+## Sequence diagrams
+
+### Get scores for links
+
+```mermaid
+sequenceDiagram
+    actor Extension
+    participant API
+    participant Database
+    Extension->>API: GET /scores?links=[l1, l2, ...] AuthHeader=user
+		activate API
+		API->>API: Validate request
+    alt Request Error
+        API->>Extension: Request Error (Invalid params / authentication...)
+    end
+		API->>Database: BatchGetItem(Table:Discontent - PK=<l1, l2...>, SK=<l1, l2...>)
+		Note over API,Database: If a link does not yet exist in the table, it's not returned
+		activate Database
+    alt Database Error
+        Database->>API: Database Error (connection / server...)
+        API->>Extension: Server Error
+    end
+		Database->>API: Return [{link, sumOfVotes, numberOfVotes}]
+		API->>API: Calculate scores for [{link, sumOfVotes, numberOfVotes}]
+		API->>Extension: Return [{link, score}]
+    deactivate Database
+    deactivate API
+```
+
+### Submit a vote for a link
+
+```mermaid
+sequenceDiagram
+    actor Extension
+    participant API
+    participant Database
+    Extension->>API: POST /vote?link=link&vote=vote AuthHeader=user
+		activate API
+		API->>API: Validate parameters
+    alt Invalid parameters
+        API->>Extension: Error: Invalid parameters
+    end
+		API->>Database: Check user history. GetBatchItems(_________________)
+		Note over API,Database: Too many votes? GetItem(PK=date, SK=userId)
+		Note over API,Database: Banned? GetItem(PK=userId, SK=userId)
+		activate Database
+    alt Database Error
+        Database->>API: Database Error (connection / server...)
+        API->>Extension: Server Error
+    end
+		Database->>API: Return UserHistory
+		deactivate Database
+		API->>API: Check UserHistory
+    alt Failed
+        API->>Extension: Error: Too many votes or banned
+    end
+		activate Database
+		API->>Database: Submit vote. BatchWriteItems(_________________)
+		Note over API,Database: UpdateItem(PK=link, SK=userId | vote)
+		Note over API,Database: UpdateItem(PK=link, SK=link | countOfVotes++, sumOfVotes+=vote)
+		Note over API,Database: UpdateItem(PK=day, SK=link | countOfVotes++, sumOfVotes+=vote)
+		Note over API,Database: UpdateItem(PK=day, SK=user | countOfVotes++, sumOfVotes+=vote)
+		Note over API,Database: UpdateItem(PK=user, SK=user | userNotes, banned=false)
+		activate Database
+    alt Database Error
+        Database->>API: Database Error (connection / server...)
+        API->>Extension: Server Error
+    end
+		Database->>API: Return success
+		API->>Extension: Return success
+    deactivate Database
+    deactivate API
+```
