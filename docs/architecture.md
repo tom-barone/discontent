@@ -49,11 +49,14 @@ Only one `Vote` can be submitted per `User` per `Link`.
 
 _TODO: Link to a swagger page._
 
-| Request                                               | Auth header   | Response                       |
-| ----------------------------------------------------- | ------------- | ------------------------------ |
-| `GET /scores?links=<JSON stringified array of links>` | `<User_UUID>` | `[{link: Link, score: Score}]` |
-| `GET /vote?link=<Link>`                               | `<User_UUID>` | `Vote`                         |
-| `POST /vote?link=<Link>&vote=<Vote>`                  | `<User_UUID>` |                                |
+| Request                                                               | Response                       | Visibility                            |
+| --------------------------------------------------------------------- | ------------------------------ | ------------------------------------- |
+| `GET /scores?links=[l1, l2, ...]`                                     | `[{link: Link, score: Score}]` | Public                                |
+| `GET /vote?link=link`                                                 | `Vote`                         | Public                                |
+| `POST /vote {link:<Link>, vote:<Vote>}`                               |                                | Public                                |
+| `POST /admin/vote {link:<Link>, vote:<Vote>, timestamp: <Timestamp>}` |                                | Admin only, used for database seeding |
+
+The APIs
 
 ## Database
 
