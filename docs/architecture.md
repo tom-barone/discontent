@@ -21,7 +21,11 @@ _Right now all voting just happens on the domain, but there could be a future wh
 
 ### Vote
 
-An `Integer` that's either a +1 or -1. Sum all votes to get the `Score` of a `Link`.
+An `Integer` that's either a +1 or -1, stored with a `Timestamp` when the vote was made.
+
+### Timestamp
+
+Represented everywhere as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string with the specific format `2023-02-02T09:36:03Z`.
 
 ### Score
 
@@ -29,12 +33,14 @@ An `enum` that represents how good a website `Link` is. It has 4 possible values
 
 | Enum            | Definition                                              |
 | --------------- | ------------------------------------------------------- |
-| `Good`          | Sum of all votes >= 10                                  |
+| `Good`          | Sum of all votes >= 20                                  |
 | `Bad`           | Sum of all votes <= -10                                 |
-| `Controversial` | (-10 < Sum of all votes < 10) && (Number of votes > 10) |
+| `Controversial` | (-10 < Sum of all votes < 20) && (Number of votes > 20) |
 | `NoScore`       | If none of the above                                    |
 
 The score is calculated in the API and exposed to the extension through the `/scores` request.
+
+In the future this will probably need to be tweaked for more nuanced scoring, like weighting recent votes higher.
 
 ### User
 
@@ -49,12 +55,13 @@ Only one `Vote` can be submitted per `User` per `Link`.
 
 _TODO: Link to a swagger page._
 
-| Request                                                               | Response                       | Visibility                            |
-| --------------------------------------------------------------------- | ------------------------------ | ------------------------------------- |
-| `GET /scores?links=[l1, l2, ...]`                                     | `[{link: Link, score: Score}]` | Public                                |
-| `GET /vote?link=link`                                                 | `Vote`                         | Public                                |
-| `POST /vote {link:<Link>, vote:<Vote>}`                               |                                | Public                                |
-| `POST /admin/vote {link:<Link>, vote:<Vote>, timestamp: <Timestamp>}` |                                | Admin only, used for database seeding |
+| Request                                            | Response                       | Visibility                            |
+| -------------------------------------------------- | ------------------------------ | ------------------------------------- |
+| `GET /scores?links=[l1, l2, ...]`                  | `[{link: Link, score: Score}]` | Public                                |
+| `GET /vote?link=link`                              | `Vote`                         | Public                                |
+| `POST /vote {link, vote, userId}`                  |                                | Public                                |
+| `POST /admin/vote {link, vote, userId, timestamp}` |                                | Admin only, used for database seeding |
+| `POST /admin/settings { votingIsDisabled }`        |                                | Admin only                            |
 
 ## Database
 
@@ -99,7 +106,7 @@ sequenceDiagram
     actor Extension
     participant API
     participant Database
-    Extension->>API: GET /scores?links=[l1, l2, ...] AuthHeader=user
+    Extension->>API: GET /scores?links=[l1, l2, ...]
 		activate API
 		API->>API: Validate request
     alt Request Error
@@ -126,13 +133,14 @@ sequenceDiagram
     actor Extension
     participant API
     participant Database
-    Extension->>API: POST /vote?link=link&vote=vote AuthHeader=user
+    Extension->>API: POST /vote {link:<Link>, vote:<Vote>}
 		activate API
 		API->>API: Validate parameters
     alt Invalid parameters
         API->>Extension: Error: Invalid parameters
     end
-		API->>Database: Check user history. GetBatchItems(_________________)
+		API->>Database: Check user history & settings. GetBatchItems(___________)
+		Note over API,Database: Voting disabled? GetItem(PK=settings, SK=settings)
 		Note over API,Database: Too many votes? GetItem(PK=date, SK=userId)
 		Note over API,Database: Banned? GetItem(PK=userId, SK=userId)
 		activate Database
@@ -140,11 +148,11 @@ sequenceDiagram
         Database->>API: Database Error (connection / server...)
         API->>Extension: Server Error
     end
-		Database->>API: Return UserHistory
+		Database->>API: Return UserHistory & Settings
 		deactivate Database
-		API->>API: Check UserHistory
+		API->>API: Check UserHistory & Settings
     alt Failed
-        API->>Extension: Error: Too many votes or banned
+        API->>Extension: Error: Too many votes / banned / voting disabled
     end
 		activate Database
 		API->>Database: Submit vote. BatchWriteItems(_________________)

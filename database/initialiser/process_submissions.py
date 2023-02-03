@@ -37,7 +37,7 @@ def process_submissions(input_files):
     df = df.sort_values(by='votes', ascending=False)
 
     # Step 4
-    new_min = 20
+    new_min = 25
     new_max = 1000
     current_min = df['votes'].min()
     current_max = df['votes'].max()

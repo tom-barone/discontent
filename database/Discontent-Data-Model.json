@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "",
     "DateCreated": "Feb 01, 2023, 10:42 AM",
-    "DateLastModified": "Feb 01, 2023, 04:28 PM",
+    "DateLastModified": "Feb 02, 2023, 11:55 AM",
     "Description": "",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
@@ -61,6 +61,10 @@
         {
           "AttributeName": "DailyLinkHistory_PK",
           "AttributeType": "S"
+        },
+        {
+          "AttributeName": "votingIsDisabled",
+          "AttributeType": "BOOL"
         }
       ],
       "GlobalSecondaryIndexes": [
@@ -407,6 +411,17 @@
           },
           "DailyLinkHistory_PK": {
             "S": "2023-01-10"
+          }
+        },
+        {
+          "PK": {
+            "S": "settings"
+          },
+          "SK": {
+            "S": "settings"
+          },
+          "votingIsDisabled": {
+            "BOOL": false
           }
         }
       ],
