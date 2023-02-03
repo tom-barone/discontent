@@ -1,0 +1,139 @@
+# Config reference: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/template-reference.html
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: "Backend services for Discontent"
+
+Resources:
+  Database:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: UserVotes_PK
+          AttributeType: S
+        - AttributeName: voteTimestamp
+          AttributeType: S
+        - AttributeName: DailyUserHistory_PK
+          AttributeType: S
+        - AttributeName: countOfVotes
+          AttributeType: N
+        - AttributeName: DailyLinkHistory_PK
+          AttributeType: S
+        - AttributeName: sumOfVotes
+          AttributeType: N
+      GlobalSecondaryIndexes:
+        - IndexName: UserVotes
+          KeySchema:
+            - AttributeName: UserVotes_PK
+              KeyType: HASH
+            - AttributeName: voteTimestamp
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - entityType
+              - voteValue
+              - PK
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: DailyUserHistory
+          KeySchema:
+            - AttributeName: DailyUserHistory_PK
+              KeyType: HASH
+            - AttributeName: countOfVotes
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - entityType
+              - SK
+              - sumOfVotes
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: DailyLinkHistoryByCountOfVotes
+          KeySchema:
+            - AttributeName: DailyLinkHistory_PK
+              KeyType: HASH
+            - AttributeName: countOfVotes
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - entityType
+              - SK
+              - sumOfVotes
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: DailyLinkHistoryBySumOfVotes
+          KeySchema:
+            - AttributeName: DailyLinkHistory_PK
+              KeyType: HASH
+            - AttributeName: sumOfVotes
+              KeyType: RANGE
+          Projection:
+            ProjectionType: INCLUDE
+            NonKeyAttributes:
+              - entityType
+              - SK
+              - countOfVotes
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      BillingMode: PROVISIONED
+      TableName: PRODUCTION
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+  RequestHandler:
+    Type: AWS::Serverless::Function
+    Properties:
+      MemorySize: 128
+      Architectures: ["arm64"]
+      PackageType: Zip
+      Handler: bootstrap
+      Runtime: provided.al2
+      Timeout: 5
+      CodeUri: target/lambda/request-handler
+      Events:
+        PostAdminSettings:
+          Type: Api
+          Properties:
+            Path: /admin/settings
+            Method: post
+        PostAdminVote:
+          Type: Api
+          Properties:
+            Path: /admin/vote
+            Method: post
+      Environment:
+        Variables:
+          DATABASE: !Ref Database
+      Policies:
+        - DynamoDBWritePolicy: # More info about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+            TableName: !Ref Database
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ApiGateway:
+    Description: "API Gateway endpoint URL for the production stage"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+  RequestHandler:
+    Description: "Lambda Function ARN that handles the API requests"
+    Value: !GetAtt RequestHandler.Arn
+  Database:
+    Description: "DynamoDB table"
+    Value: !GetAtt Database.Arn

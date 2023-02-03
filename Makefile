@@ -11,7 +11,7 @@ install:
 	cd database/initialiser && poetry install
 
 dev: guard-NODE_ENV build
-	make -j 2 dev-webpack-watch dev-web-extension
+	$(MAKE) -j 2 dev-webpack-watch dev-web-extension
 
 build: guard-NODE_ENV clean install
 	cd extension && npx webpack
