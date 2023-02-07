@@ -1,10 +1,10 @@
 {
   "ModelName": "Discontent Data Model",
   "ModelMetadata": {
-    "Author": "",
+    "Author": "Tom Barone",
     "DateCreated": "Feb 01, 2023, 10:42 AM",
-    "DateLastModified": "Feb 02, 2023, 11:55 AM",
-    "Description": "",
+    "DateLastModified": "Feb 07, 2023, 09:50 AM",
+    "Description": "Database model for Discontent",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
   },
@@ -47,7 +47,7 @@
           "AttributeType": "S"
         },
         {
-          "AttributeName": "banned",
+          "AttributeName": "userIsBanned",
           "AttributeType": "BOOL"
         },
         {
@@ -278,7 +278,7 @@
           "entityType": {
             "S": "User"
           },
-          "banned": {
+          "userIsBanned": {
             "BOOL": false
           }
         },
@@ -295,7 +295,7 @@
           "userNotes": {
             "S": "Initial HackerNews seed"
           },
-          "banned": {
+          "userIsBanned": {
             "BOOL": false
           }
         },
@@ -309,7 +309,7 @@
           "entityType": {
             "S": "User"
           },
-          "banned": {
+          "userIsBanned": {
             "BOOL": false
           }
         },

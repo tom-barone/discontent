@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "config"
+version = "0.1.0"
+description = ""
+authors = ["Tom Barone <mail@tombarone.net>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+cfn-flip = "^1.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

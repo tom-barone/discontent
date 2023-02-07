@@ -1,4 +1,10 @@
 
+install:
+	cd config && poetry install
+
+dev:
+	cargo lambda start
+
 format:
 	cargo fmt
 
@@ -7,3 +13,14 @@ build:
 
 deploy: build
 	sam deploy
+
+clean:
+	cargo clean
+
+test:
+	cargo test
+
+## Secondary targets
+
+convert-NoSQL-workbench-config: install
+	cd config && poetry run cfn-flip --yaml Database-NoSQLWorkbench-Model.json Database-NoSQLWorkbench-Model.yaml

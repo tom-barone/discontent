@@ -47,9 +47,17 @@ In the future this will probably need to be tweaked for more nuanced scoring, li
 Identified by a `UUID`. I wanted a passwordless system and this seemed like a flexible choice. Has a number of properties:
 
 - userNotes: `String`
-- banned: `Boolean`
+- userIsBanned: `Boolean`
 
 Only one `Vote` can be submitted per `User` per `Link`.
+
+### Settings
+
+System wide configuration that can change the behaviour of everything.
+
+- votingIsDisabled: `Boolean`
+
+The idea behind `votingIsDisabled` is in case there's a spam armaggedon and all voting needs to be stopped.
 
 ## API
 
@@ -160,7 +168,7 @@ sequenceDiagram
 		Note over API,Database: UpdateItem(PK=link, SK=link | countOfVotes++, sumOfVotes+=vote)
 		Note over API,Database: UpdateItem(PK=day, SK=link | countOfVotes++, sumOfVotes+=vote)
 		Note over API,Database: UpdateItem(PK=day, SK=user | countOfVotes++, sumOfVotes+=vote)
-		Note over API,Database: UpdateItem(PK=user, SK=user | userNotes, banned=false)
+		Note over API,Database: UpdateItem(PK=user, SK=user | userNotes, userIsBanned=false)
 		activate Database
     alt Database Error
         Database->>API: Database Error (connection / server...)
