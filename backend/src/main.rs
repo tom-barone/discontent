@@ -1,7 +1,11 @@
-use aws_sdk_dynamodb::Client;
+mod types;
+mod routes;
+
+
+//use aws_sdk_dynamodb::Client;
+//use std::env;
 use lambda_http::{run, service_fn, Body, Error, Request, RequestExt, Response};
-use serde::{Deserialize, Serialize};
-use std::env;
+use routes::admin_vote;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -44,22 +48,3 @@ async fn root_handler(request: Request) -> Result<Response<Body>, Error> {
     }
 }
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct AdminVote {
-    pub link: String,
-    pub vote: i32,
-    pub user_id: String,
-    pub timestamp: String,
-}
-
-fn admin_vote(request: Request) -> Result<Response<Body>, Error> {
-    let body = request.payload::<AdminVote>()?;
-    println!("{:?}", body);
-
-    let resp = Response::builder()
-        .status(200)
-        .header("content-type", "text/plain")
-        .body("Votes! {}".into())
-        .map_err(Box::new)?;
-    return Ok(resp);
-}
