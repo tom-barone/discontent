@@ -1,6 +1,23 @@
-# Database Initialiser
+# Database
 
-This is a set of python scripts that can be used to:
+This directory contains python scripts to manage the Discontent DynamoDB.
+
+1. Run a local instance of DynamoDB for development and testing
+1. Seed the DynamoDB
+
+```bash
+poetry run python database.py setup
+```
+will create the database with the latest schema, and initialise it with seed data
+
+```bash
+poetry run python database.py reset
+```
+
+- drop: delete the database
+- setup: create and seed
+- reset: drop and setup
+
 
 1. Scrape the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news) and gets the links & upvotes.
 1. Process the submissions into a CSV format that can be used as input to the Discontent database.

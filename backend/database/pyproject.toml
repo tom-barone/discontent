@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "initialiser"
+name = "database"
 version = "0.1.0"
-description = "Scrapes posts from Hacker News for links and votes, and processes them"
+description = "Scripts to manage the Discontent database"
 authors = ["Tom Barone <mail@tombarone.net>"]
 readme = "README.md"
 
@@ -13,6 +13,7 @@ beautifulsoup4 = "^4.11.1"
 tqdm = "^4.64.1"
 fake-useragent = "^1.1.1"
 pandas = "^1.5.3"
+boto3 = "^1.26.66"
 
 
 [build-system]

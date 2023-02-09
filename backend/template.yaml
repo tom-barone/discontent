@@ -17,28 +17,18 @@ Resources:
           AttributeType: S
         - AttributeName: SK
           AttributeType: S
-        - AttributeName: entityType
-          AttributeType: S
-        - AttributeName: countOfVotes
-          AttributeType: N
-        - AttributeName: sumOfVotes
-          AttributeType: N
-        - AttributeName: voteValue
-          AttributeType: N
-        - AttributeName: voteTimestamp
-          AttributeType: S
-        - AttributeName: userNotes
-          AttributeType: S
-        - AttributeName: userIsBanned
-          AttributeType: BOOL
         - AttributeName: UserVotes_PK
+          AttributeType: S
+        - AttributeName: voteTimestamp
           AttributeType: S
         - AttributeName: DailyUserHistory_PK
           AttributeType: S
+        - AttributeName: countOfVotes
+          AttributeType: N
         - AttributeName: DailyLinkHistory_PK
           AttributeType: S
-        - AttributeName: votingIsDisabled
-          AttributeType: BOOL
+        - AttributeName: sumOfVotes
+          AttributeType: N
       GlobalSecondaryIndexes:
         - IndexName: UserVotes
           KeySchema:

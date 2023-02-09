@@ -1,0 +1,142 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "Discontent": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "KeySchema": [
+          {
+            "AttributeName": "PK",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "SK",
+            "KeyType": "RANGE"
+          }
+        ],
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "SK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "UserVotes_PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "voteTimestamp",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "DailyUserHistory_PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "countOfVotes",
+            "AttributeType": "N"
+          },
+          {
+            "AttributeName": "DailyLinkHistory_PK",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sumOfVotes",
+            "AttributeType": "N"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "UserVotes",
+            "KeySchema": [
+              {
+                "AttributeName": "UserVotes_PK",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "voteTimestamp",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "entityType",
+                "voteValue",
+                "PK"
+              ]
+            }
+          },
+          {
+            "IndexName": "DailyUserHistory",
+            "KeySchema": [
+              {
+                "AttributeName": "DailyUserHistory_PK",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "countOfVotes",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "entityType",
+                "SK",
+                "sumOfVotes"
+              ]
+            }
+          },
+          {
+            "IndexName": "DailyLinkHistoryByCountOfVotes",
+            "KeySchema": [
+              {
+                "AttributeName": "DailyLinkHistory_PK",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "countOfVotes",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "entityType",
+                "SK",
+                "sumOfVotes"
+              ]
+            }
+          },
+          {
+            "IndexName": "DailyLinkHistoryBySumOfVotes",
+            "KeySchema": [
+              {
+                "AttributeName": "DailyLinkHistory_PK",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "sumOfVotes",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "INCLUDE",
+              "NonKeyAttributes": [
+                "entityType",
+                "SK",
+                "countOfVotes"
+              ]
+            }
+          }
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "TableName": "Discontent"
+      }
+    }
+  }
+}

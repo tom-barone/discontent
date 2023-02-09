@@ -23,4 +23,4 @@ test:
 ## Secondary targets
 
 convert-NoSQL-workbench-config: install
-	cd config && poetry run cfn-flip --yaml Database-NoSQLWorkbench-Model.json Database-NoSQLWorkbench-Model.yaml
+	cd config && poetry run cfn-flip --yaml Database-CloudFormation-Model.json Database-CloudFormation-Model.yaml
