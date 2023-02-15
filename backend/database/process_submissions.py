@@ -38,7 +38,7 @@ def process_submissions(input_files):
 
     # Step 4
     new_min = 25
-    new_max = 1000
+    new_max = 100
     current_min = df['votes'].min()
     current_max = df['votes'].max()
     df['scaled_votes'] = ((new_max - new_min) * (df['votes'] - current_min) / (

@@ -13,7 +13,10 @@ beautifulsoup4 = "^4.11.1"
 tqdm = "^4.64.1"
 fake-useragent = "^1.1.1"
 pandas = "^1.5.3"
-boto3 = "^1.26.66"
+boto3 = "^1.24.66"
+aiohttp = "^3.8.3"
+asyncio = "^3.4.3"
+dynamodump = "^1.7.0"
 
 
 [build-system]

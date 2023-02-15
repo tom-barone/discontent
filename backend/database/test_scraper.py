@@ -21,7 +21,7 @@ class TestScraper(unittest.TestCase):
         self.assertEqual(len(dates), 7)
 
     def test_scraping(self):
-        # Truth set for the html file in data/hacker_news_front_2023_01_11.html
+        # Truth set for the html file in test/hacker_news_front_2023_01_11.html
         truth_set = [
             ('https://news.ycombinator.com/item?id=34338995', 123),
             ('https://elkue.com/nyc-slice/', 670),
@@ -61,7 +61,7 @@ class TestScraper(unittest.TestCase):
             ('https://zapier.com/blog/secondments-at-zapier/', 91)
         ]
 
-        with open('data/hacker_news_front_2023_01_11.html', 'r') as f:
+        with open('test/hacker_news_front_2023_01_11.html', 'r') as f:
             html = f.read()
             soup = BeautifulSoup(html, 'html.parser')
 

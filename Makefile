@@ -22,6 +22,9 @@ clean:
 test: install
 	cd database/initialiser && poetry run python -m unittest discover
 
+deploy:
+	cd backend && $(MAKE) deploy
+
 # Secondary targets
 
 dev-webpack-watch: guard-NODE_ENV

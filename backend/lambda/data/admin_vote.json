@@ -1,8 +1,18 @@
-{
-  "vote": {
-    "link": "abc.com",
-    "vote_value": 0,
-    "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"
+[
+  {
+    "vote": {
+      "link": "abc.com",
+      "vote_value": 1,
+      "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"
+    },
+    "timestamp": "2023-02-02T09:36:03Z"
   },
-  "timestamp": "2023-02-02T09:36:03Z"
-}
+  {
+    "vote": {
+      "link": "hellothere.com",
+      "vote_value": 1,
+      "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"
+    },
+    "timestamp": "2023-02-02T19:36:03Z"
+  }
+]

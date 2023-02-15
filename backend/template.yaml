@@ -42,9 +42,6 @@ Resources:
               - entityType
               - voteValue
               - PK
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
         - IndexName: DailyUserHistory
           KeySchema:
             - AttributeName: DailyUserHistory_PK
@@ -57,9 +54,6 @@ Resources:
               - entityType
               - SK
               - sumOfVotes
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
         - IndexName: DailyLinkHistoryByCountOfVotes
           KeySchema:
             - AttributeName: DailyLinkHistory_PK
@@ -72,9 +66,6 @@ Resources:
               - entityType
               - SK
               - sumOfVotes
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
         - IndexName: DailyLinkHistoryBySumOfVotes
           KeySchema:
             - AttributeName: DailyLinkHistory_PK
@@ -87,14 +78,13 @@ Resources:
               - entityType
               - SK
               - countOfVotes
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-      BillingMode: PROVISIONED
-      TableName: PRODUCTION
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST
+      TableName: Discontent
+      ImportSourceSpecification:
+        InputFormat: CSV
+        S3BucketSource:
+          S3Bucket: "discontent-seed-bucket"
+          S3KeyPrefix: "seed.csv"
 
   RequestHandler:
     Type: AWS::Serverless::Function
@@ -105,24 +95,32 @@ Resources:
       Handler: bootstrap
       Runtime: provided.al2
       Timeout: 5
-      CodeUri: target/lambda/request-handler
+      CodeUri: lambda/target/lambda/request-handler
       Events:
         PostAdminSettings:
           Type: Api
           Properties:
             Path: /admin/settings
             Method: post
+            RestApiId: !Ref ApiGateway
         PostAdminVote:
           Type: Api
           Properties:
             Path: /admin/vote
             Method: post
+            RestApiId: !Ref ApiGateway
       Environment:
         Variables:
-          DATABASE: !Ref Database
+          TABLE_NAME: !Ref Database
+          ENVIRONMENT: production
       Policies:
         - DynamoDBWritePolicy: # More info about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
             TableName: !Ref Database
+
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: v1
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
@@ -130,7 +128,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   ApiGateway:
     Description: "API Gateway endpoint URL for the production stage"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.${AWS::URLSuffix}/v1/"
   RequestHandler:
     Description: "Lambda Function ARN that handles the API requests"
     Value: !GetAtt RequestHandler.Arn
