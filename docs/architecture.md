@@ -12,16 +12,16 @@ erDiagram
 
 ### Link
 
-A `String` of the domain that represents the website, for example `"www.google.com" or "blog.myspecialplace.com"`.
+A `String` of the hostname that represents the website, for example `"www.google.com" or "blog.myspecialplace.com"`.
 
-[See here](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/What_is_a_URL) for a good explanation of the different pieces in the URL:
+[See here](https://developer.mozilla.org/en-US/docs/Web/API/Location/hostname) for a good explanation of the different pieces in the URL:
 <br/><img height=70 src="../docs/assets/URL_description.png" alt="Structure and components of a URL"></img>
 
-_Right now all voting just happens on the domain, but there could be a future where Discontent allows voting on paths underneath the domain. This mean being able to vote on individual Medium articles for example._
+_Right now all voting just happens on the hostname, but there could be a future where Discontent allows voting on full URL paths. This would mean being able to vote on individual Medium articles for example._
 
 ### Vote
 
-An `Integer` that's either a +1 or -1, stored with a `Timestamp` when the vote was made.
+An `Integer` that's either a +1 or -1, stored with a `Timestamp` when the vote was made. Always associated with a `User` and a `Link`.
 
 ### Timestamp
 
@@ -46,18 +46,16 @@ In the future this will probably need to be tweaked for more nuanced scoring, li
 
 Identified by a `UUID`. I wanted a passwordless system and this seemed like a flexible choice. Has a number of properties:
 
-- userNotes: `String`
-- userBannedOn: `Timestamp`
-
-Only one `Vote` can be submitted per `User` per `Link`.
+- user_notes: `String`
+- user_is_banned: `Timestamp`
 
 ### Settings
 
 System wide configuration that can change the behaviour of everything.
 
-- votingIsDisabled: `Boolean`
+- voting_is_disabled: `Boolean`
 
-The idea behind `votingIsDisabled` is in case there's a spam armaggedon and all voting needs to be stopped.
+The idea behind `voting_is_disabled` is in case there's a spam armaggedon and all voting needs to be stopped.
 
 ## API
 
@@ -65,11 +63,11 @@ _TODO: Link to a swagger page._
 
 | Request                                            | Response                       | Visibility                            |
 | -------------------------------------------------- | ------------------------------ | ------------------------------------- |
-| `GET /scores?links=[l1, l2, ...]`                  | `[{link: Link, score: Score}]` | Public                                |
+| `GET /scores?for=[link1, link2, ...]`              | `[{link: Link, score: Score}]` | Public                                |
 | `GET /vote?link=link`                              | `Vote`                         | Public                                |
 | `POST /vote {link, vote, userId}`                  |                                | Public                                |
 | `POST /admin/vote {link, vote, userId, timestamp}` |                                | Admin only, used for database seeding |
-| `POST /admin/settings { votingIsDisabled }`        |                                | Admin only                            |
+| `POST /admin/settings { voting_is_disabled }`      |                                | Admin only                            |
 
 ## Database
 
@@ -83,8 +81,8 @@ The access patterns are reasonably well defined:
 
 | Runtime Access Patterns       | Description                                        | Table - Filter                                            |
 | ----------------------------- | -------------------------------------------------- | --------------------------------------------------------- |
-| Get vote summaries for a Link | Summaries are `sumOfVotes` & `numberOfVotes`       | `Table:Discontent - PK=link#<link>, SK=link#<link>`       |
-| Get all votes for a Link      | To calculate `sumOfVotes` & `numberOfVotes`        | `Table:Discontent - PK=link#<link>, SK.startswith(user#)` |
+| Get vote summaries for a Link | Summaries are `sum_of_votes` & `count_of_votes`    | `Table:Discontent - PK=link#<link>, SK=link#<link>`       |
+| Get all votes for a Link      | To calculate `sum_of_votes` & `count_of_votes`     | `Table:Discontent - PK=link#<link>, SK.startswith(user#)` |
 | Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
 | Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
 | Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<userId>`      |
@@ -114,22 +112,22 @@ sequenceDiagram
     actor Extension
     participant API
     participant Database
-    Extension->>API: GET /scores?links=[l1, l2, ...]
+    Extension->>API: GET /scores?for=[link1, link2, ...]
 		activate API
 		API->>API: Validate request
     alt Request Error
         API->>Extension: Request Error (Invalid params / authentication...)
     end
-		API->>Database: BatchGetItem(Table:Discontent - PK=<l1, l2...>, SK=<l1, l2...>)
+		API->>Database: BatchGetItem(Table:Discontent - PK,SK=<link, ...>)
 		Note over API,Database: If a link does not yet exist in the table, it's not returned
 		activate Database
     alt Database Error
         Database->>API: Database Error (connection / server...)
         API->>Extension: Server Error
     end
-		Database->>API: Return [{link, sumOfVotes, numberOfVotes}]
-		API->>API: Calculate scores for [{link, sumOfVotes, numberOfVotes}]
-		API->>Extension: Return [{link, score}]
+		Database->>API: Return [{link, sum_of_votes, count_of_votes}, ...]
+		API->>API: Calculate scores
+		API->>Extension: Return [{link, score}, ...]
     deactivate Database
     deactivate API
 ```
@@ -165,10 +163,10 @@ sequenceDiagram
 		activate Database
 		API->>Database: Submit vote. BatchWriteItems(_________________)
 		Note over API,Database: UpdateItem(PK=link, SK=userId | vote)
-		Note over API,Database: UpdateItem(PK=link, SK=link | countOfVotes++, sumOfVotes+=vote)
-		Note over API,Database: UpdateItem(PK=day, SK=link | countOfVotes++, sumOfVotes+=vote)
-		Note over API,Database: UpdateItem(PK=day, SK=user | countOfVotes++, sumOfVotes+=vote)
-		Note over API,Database: UpdateItem(PK=user, SK=user | userNotes)
+		Note over API,Database: UpdateItem(PK=link, SK=link | count_of_votes++, sum_of_votes+=vote)
+		Note over API,Database: UpdateItem(PK=day, SK=link | count_of_votes++, sum_of_votes+=vote)
+		Note over API,Database: UpdateItem(PK=day, SK=user | count_of_votes++, sum_of_votes+=vote)
+		Note over API,Database: UpdateItem(PK=user, SK=user | user_notes)
 		activate Database
     alt Database Error
         Database->>API: Database Error (connection / server...)
