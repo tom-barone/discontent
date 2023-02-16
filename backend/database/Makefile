@@ -1,4 +1,3 @@
-
 # Primary targets
 
 install:
@@ -7,25 +6,20 @@ install:
 test: install
 	poetry run python -m unittest discover
 
-generate-seed: install
-	# Create seed CSV
-	poetry run python database.py generate_seed_data --input_files="seed/hacker_news_submissions/submissions_*.csv" --output="seed/seed.csv"
-	# Upload to S3
+seed: install seed/hacker_news_submissions seed/seed.csv
+	# Upload generated seed data to s3
 	aws s3 cp seed/seed.csv s3://discontent-seed-bucket/seed.csv
+
+clean:
+	rm -rf seed __pycache__ docker
 
 # Secondary targets
 
-# Unused targets
+seed/hacker_news_submissions:
+	# Fetch the hacker news submissions from S3
+	# This is better than scraping them all over again
+	aws s3 cp --recursive s3://discontent-seed-bucket/hacker_news_submissions seed/hacker_news_submissions
 
-#stop:
-	#docker-compose down
-
-#copy-prod-to-local:
-	#poetry run dynamodump --noConfirm --mode backup -a zip --region us-east-1 --srcTable TestImpo
-
-#dev: stop
-	#docker-compose up --detach
-	#sleep 2s
-	#$(MAKE) seed
-
-#poetry run dynamodump --noConfirm --mode restore --region local --host localhost --port 8000 --srcTable Discontent --dumpPath seed
+seed/seed.csv:
+	# Create seed CSV
+	poetry run python database.py generate_seed_data --input_files="seed/hacker_news_submissions/submissions_*.csv" --output="seed/seed.csv"

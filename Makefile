@@ -7,8 +7,8 @@ endif
 # Primary targets
 
 install:
-	cd extension && npm install
-	cd database/initialiser && poetry install
+	cd backend && $(MAKE) install
+	#cd extension && $(MAKE) install
 
 dev: guard-NODE_ENV build
 	$(MAKE) -j 2 dev-webpack-watch dev-web-extension

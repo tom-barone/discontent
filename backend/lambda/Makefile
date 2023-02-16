@@ -1,5 +1,6 @@
 dev:
-	ENVIRONMENT=development TABLE_NAME=Discontent cargo lambda start --no-reload
+	#ENVIRONMENT=development TABLE_NAME=Discontent cargo lambda start --no-reload
+	ENVIRONMENT=production TABLE_NAME=Discontent cargo lambda start --no-reload
 
 format:
 	cargo fmt
@@ -11,4 +12,4 @@ clean:
 	cargo clean
 
 test:
-	cargo test
+	cargo test -- --nocapture
