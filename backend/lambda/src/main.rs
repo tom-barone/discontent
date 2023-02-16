@@ -1,11 +1,11 @@
 mod routes;
 mod types;
+mod validate;
+mod scoring;
 
-//use aws_sdk_dynamodb::config::{Builder, Config};
-//use aws_sdk_dynamodb::model::AttributeValue;
 use aws_sdk_dynamodb::Client;
 use lambda_http::{http::Method, run, service_fn, Body, Error, Request, Response};
-use routes::admin_votes;
+use routes::*;
 use std::env;
 use tracing::*;
 use tracing_subscriber::fmt;
@@ -61,8 +61,11 @@ async fn root_handler(
     table_name: &String,
 ) -> Result<Response<Body>, Error> {
     let response = match (request.uri().path(), request.method()) {
-        ("/v1/admin/votes", &Method::POST) => {
-            admin_votes(request, dynamo_db_client, table_name).await
+        //("/v1/admin/votes", &Method::POST) => {
+            //admin_votes(request, dynamo_db_client, table_name).await
+        //}
+        ("/v1/scores", &Method::GET) => {
+            scores(request, dynamo_db_client, table_name).await
         }
         _ => {
             let resp = Response::builder()

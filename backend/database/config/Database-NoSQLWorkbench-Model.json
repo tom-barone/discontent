@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Tom Barone",
     "DateCreated": "Feb 01, 2023, 10:42 AM",
-    "DateLastModified": "Feb 08, 2023, 11:29 AM",
+    "DateLastModified": "Feb 16, 2023, 12:36 PM",
     "Description": "Database model for Discontent",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
@@ -23,31 +23,31 @@
       },
       "NonKeyAttributes": [
         {
-          "AttributeName": "entityType",
+          "AttributeName": "entity_type",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "countOfVotes",
+          "AttributeName": "count_of_votes",
           "AttributeType": "N"
         },
         {
-          "AttributeName": "sumOfVotes",
+          "AttributeName": "sum_of_votes",
           "AttributeType": "N"
         },
         {
-          "AttributeName": "voteValue",
+          "AttributeName": "vote_value",
           "AttributeType": "N"
         },
         {
-          "AttributeName": "voteTimestamp",
+          "AttributeName": "vote_timestamp",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "userNotes",
+          "AttributeName": "user_notes",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "userIsBanned",
+          "AttributeName": "user_is_banned",
           "AttributeType": "BOOL"
         },
         {
@@ -63,7 +63,7 @@
           "AttributeType": "S"
         },
         {
-          "AttributeName": "votingIsDisabled",
+          "AttributeName": "voting_is_disabled",
           "AttributeType": "BOOL"
         }
       ],
@@ -76,15 +76,15 @@
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "voteTimestamp",
+              "AttributeName": "vote_timestamp",
               "AttributeType": "S"
             }
           },
           "Projection": {
             "ProjectionType": "INCLUDE",
             "NonKeyAttributes": [
-              "entityType",
-              "voteValue",
+              "entity_type",
+              "vote_value",
               "PK"
             ]
           }
@@ -97,16 +97,16 @@
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "countOfVotes",
+              "AttributeName": "count_of_votes",
               "AttributeType": "N"
             }
           },
           "Projection": {
             "ProjectionType": "INCLUDE",
             "NonKeyAttributes": [
-              "entityType",
+              "entity_type",
               "SK",
-              "sumOfVotes"
+              "sum_of_votes"
             ]
           }
         },
@@ -118,16 +118,16 @@
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "countOfVotes",
+              "AttributeName": "count_of_votes",
               "AttributeType": "N"
             }
           },
           "Projection": {
             "ProjectionType": "INCLUDE",
             "NonKeyAttributes": [
-              "entityType",
+              "entity_type",
               "SK",
-              "sumOfVotes"
+              "sum_of_votes"
             ]
           }
         },
@@ -139,16 +139,16 @@
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "sumOfVotes",
+              "AttributeName": "sum_of_votes",
               "AttributeType": "N"
             }
           },
           "Projection": {
             "ProjectionType": "INCLUDE",
             "NonKeyAttributes": [
-              "entityType",
+              "entity_type",
               "SK",
-              "countOfVotes"
+              "count_of_votes"
             ]
           }
         }
@@ -161,13 +161,13 @@
           "SK": {
             "S": "link#www.wikipedia.org"
           },
-          "entityType": {
-            "S": "Link"
+          "entity_type": {
+            "S": "LinkDetail"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "2"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "2"
           }
         },
@@ -178,13 +178,13 @@
           "SK": {
             "S": "user#john"
           },
-          "entityType": {
+          "entity_type": {
             "S": "Vote"
           },
-          "voteValue": {
+          "vote_value": {
             "N": "1"
           },
-          "voteTimestamp": {
+          "vote_timestamp": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -198,13 +198,13 @@
           "SK": {
             "S": "user#jeff"
           },
-          "entityType": {
+          "entity_type": {
             "S": "Vote"
           },
-          "voteValue": {
+          "vote_value": {
             "N": "1"
           },
-          "voteTimestamp": {
+          "vote_timestamp": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -218,13 +218,13 @@
           "SK": {
             "S": "link#www.google.com"
           },
-          "entityType": {
-            "S": "Link"
+          "entity_type": {
+            "S": "LinkDetail"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "2"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "0"
           }
         },
@@ -235,13 +235,13 @@
           "SK": {
             "S": "user#john"
           },
-          "entityType": {
+          "entity_type": {
             "S": "Vote"
           },
-          "voteValue": {
+          "vote_value": {
             "N": "1"
           },
-          "voteTimestamp": {
+          "vote_timestamp": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -255,13 +255,13 @@
           "SK": {
             "S": "user#steve"
           },
-          "entityType": {
+          "entity_type": {
             "S": "Vote"
           },
-          "voteValue": {
+          "vote_value": {
             "N": "-1"
           },
-          "voteTimestamp": {
+          "vote_timestamp": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -275,11 +275,11 @@
           "SK": {
             "S": "user#jeff"
           },
-          "entityType": {
+          "entity_type": {
             "S": "User"
           },
-          "userIsBanned": {
-            "BOOL": false
+          "user_is_banned": {
+            "BOOL": true
           }
         },
         {
@@ -289,14 +289,11 @@
           "SK": {
             "S": "user#john"
           },
-          "entityType": {
+          "entity_type": {
             "S": "User"
           },
-          "userNotes": {
+          "user_notes": {
             "S": "Initial HackerNews seed"
-          },
-          "userIsBanned": {
-            "BOOL": false
           }
         },
         {
@@ -306,11 +303,8 @@
           "SK": {
             "S": "user#steve"
           },
-          "entityType": {
+          "entity_type": {
             "S": "User"
-          },
-          "userIsBanned": {
-            "BOOL": false
           }
         },
         {
@@ -320,13 +314,13 @@
           "SK": {
             "S": "user#john"
           },
-          "entityType": {
+          "entity_type": {
             "S": "UserHistory"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "22"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "20"
           },
           "DailyUserHistory_PK": {
@@ -340,13 +334,13 @@
           "SK": {
             "S": "user#jeff"
           },
-          "entityType": {
+          "entity_type": {
             "S": "UserHistory"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "12"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "2"
           },
           "DailyUserHistory_PK": {
@@ -360,13 +354,13 @@
           "SK": {
             "S": "user#steve"
           },
-          "entityType": {
+          "entity_type": {
             "S": "UserHistory"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "1"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "-1"
           },
           "DailyUserHistory_PK": {
@@ -380,13 +374,13 @@
           "SK": {
             "S": "link#www.wikipedia.org"
           },
-          "entityType": {
+          "entity_type": {
             "S": "LinkHistory"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "20"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "10"
           },
           "DailyLinkHistory_PK": {
@@ -400,13 +394,13 @@
           "SK": {
             "S": "link#www.google.com"
           },
-          "entityType": {
+          "entity_type": {
             "S": "LinkHistory"
           },
-          "countOfVotes": {
+          "count_of_votes": {
             "N": "10"
           },
-          "sumOfVotes": {
+          "sum_of_votes": {
             "N": "-10"
           },
           "DailyLinkHistory_PK": {
@@ -420,7 +414,10 @@
           "SK": {
             "S": "settings"
           },
-          "votingIsDisabled": {
+          "entity_type": {
+            "S": "Settings"
+          },
+          "voting_is_disabled": {
             "BOOL": false
           }
         }

@@ -108,9 +108,9 @@ def generate_seed_data(input_files, output):
             seed_rows.append({
                 'PK': f'link#{row["link"]}',
                 'SK': f'user#{user}',
-                'entityType': 'Vote',
-                'voteValue': '1',
-                'voteTimestamp': '2022-07-27:12:00Z',
+                'entity_type': 'Vote',
+                'vote_value': '1',
+                'vote_timestamp': '2022-07-27:12:00Z',
                 'UserVotes_PK': user
             })
 
@@ -118,18 +118,18 @@ def generate_seed_data(input_files, output):
         seed_rows.append({
             'PK': f'link#{row["link"]}',
             'SK': f'link#{row["link"]}',
-            'entityType': 'Link',
-            'countOfVotes': row['scaled_votes'],
-            'sumOfVotes': row['scaled_votes']
+            'entity_type': 'Link',
+            'count_of_votes': row['scaled_votes'],
+            'sum_of_votes': row['scaled_votes']
         })
 
         # Link histories
         seed_rows.append({
             'PK': 'day#2023-01-10',
             'SK': f'link#{row["link"]}',
-            'entityType': 'LinkHistory',
-            'countOfVotes': row['scaled_votes'],
-            'sumOfVotes': row['scaled_votes'],
+            'entity_type': 'LinkHistory',
+            'count_of_votes': row['scaled_votes'],
+            'sum_of_votes': row['scaled_votes'],
             'DailyLinkHistory_PK': 'day#2023-01-10',
         })
 
@@ -137,18 +137,18 @@ def generate_seed_data(input_files, output):
     seed_rows.append({
         'PK': f'user#{user}',
         'SK': f'user#{user}',
-        'entityType': 'User',
-        'userIsBanned': True,  # This user can't vote
-        'userNotes': 'Initial HackerNews seed'
+        'entity_type': 'User',
+        'user_is_banned': True,  # This user can't vote
+        'user_notes': 'Initial HackerNews seed'
     })
 
     # User histories
     seed_rows.append({
         'PK': 'day#2023-01-10',
         'SK': f'user#{user}',
-        'entityType': 'UserHistory',
-        'countOfVotes': df['scaled_votes'].sum(),
-        'sumOfVotes': df['scaled_votes'].sum(),
+        'entity_type': 'UserHistory',
+        'count_of_votes': df['scaled_votes'].sum(),
+        'sum_of_votes': df['scaled_votes'].sum(),
         'DailyUserHistory_PK': 'day#2023-01-10'
     })
 
@@ -156,14 +156,12 @@ def generate_seed_data(input_files, output):
     seed_rows.append({
         'PK': 'settings',
         'SK': 'settings',
-        'entityType': 'Settings',
-        'votingIsDisabled': False
+        'entity_type': 'Settings',
+        'voting_is_disabled': False
     })
 
     seed_df = pd.DataFrame.from_dict(seed_rows)
-    seed_df.to_csv('seed/Discontent/data/seed.csv',
-                   quoting=csv.QUOTE_ALL,
-                   index=False)
+    seed_df.to_csv(output, quoting=csv.QUOTE_ALL, index=False)
 
 
 def setup():

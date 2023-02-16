@@ -19,65 +19,65 @@ Resources:
           AttributeType: S
         - AttributeName: UserVotes_PK
           AttributeType: S
-        - AttributeName: voteTimestamp
+        - AttributeName: vote_timestamp
           AttributeType: S
         - AttributeName: DailyUserHistory_PK
           AttributeType: S
-        - AttributeName: countOfVotes
+        - AttributeName: count_of_votes
           AttributeType: N
         - AttributeName: DailyLinkHistory_PK
           AttributeType: S
-        - AttributeName: sumOfVotes
+        - AttributeName: sum_of_votes
           AttributeType: N
       GlobalSecondaryIndexes:
         - IndexName: UserVotes
           KeySchema:
             - AttributeName: UserVotes_PK
               KeyType: HASH
-            - AttributeName: voteTimestamp
+            - AttributeName: vote_timestamp
               KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - entityType
-              - voteValue
+              - entity_type
+              - vote_value
               - PK
         - IndexName: DailyUserHistory
           KeySchema:
             - AttributeName: DailyUserHistory_PK
               KeyType: HASH
-            - AttributeName: countOfVotes
+            - AttributeName: count_of_votes
               KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - entityType
+              - entity_type
               - SK
-              - sumOfVotes
+              - sum_of_votes
         - IndexName: DailyLinkHistoryByCountOfVotes
           KeySchema:
             - AttributeName: DailyLinkHistory_PK
               KeyType: HASH
-            - AttributeName: countOfVotes
+            - AttributeName: count_of_votes
               KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - entityType
+              - entity_type
               - SK
-              - sumOfVotes
+              - sum_of_votes
         - IndexName: DailyLinkHistoryBySumOfVotes
           KeySchema:
             - AttributeName: DailyLinkHistory_PK
               KeyType: HASH
-            - AttributeName: sumOfVotes
+            - AttributeName: sum_of_votes
               KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
-              - entityType
+              - entity_type
               - SK
-              - countOfVotes
+              - count_of_votes
       BillingMode: PAY_PER_REQUEST
       TableName: Discontent
       ImportSourceSpecification:
