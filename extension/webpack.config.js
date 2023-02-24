@@ -4,6 +4,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: {
     "content_scripts/index": "./src/content_scripts/index.ts",
+    "background_scripts/index": "./src/background_scripts/index.ts",
     "menu/menu": "./src/menu/menu.ts",
   },
   devtool: "inline-source-map",

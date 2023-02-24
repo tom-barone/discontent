@@ -1,4 +1,6 @@
-export function identify(hostname: string): Webpage | null {
+import { Link } from "./types";
+
+export function identify(hostname: string): SearchEngine | null {
   if (hostname.includes("www.google.")) {
     return new Google();
   } else {
@@ -6,26 +8,29 @@ export function identify(hostname: string): Webpage | null {
   }
 }
 
-export class Webpage {
-  public getAllLinksOnPage(): Link[] {
+class SearchEngine {
+  public getAllLinks(): SearchEngineLink[] {
     throw new Error("Not implemented");
   }
 }
 
-export class Google extends Webpage {
-  public getAllLinksOnPage(): Link[] {
+class Google extends SearchEngine {
+  public getAllLinks(): SearchEngineLink[] {
     // Get all the anchor tags on the page
     const anchor_tags = document.getElementsByTagName("a");
 
     // Remove the google referral from the search results
-    const search_links: Link[] = [];
+    const search_links: SearchEngineLink[] = [];
     Array.from(anchor_tags).forEach((tag) => {
       // All google search results have an h3 tag below them
       const headerElement = tag.querySelector("h3");
       if (headerElement != null) {
         search_links.push(
           // Remove any google referral stuff from the url
-          new Link(this.removeGoogleReferral(tag.href), headerElement)
+          new SearchEngineLink(
+            this.removeGoogleReferral(tag.href),
+            headerElement
+          )
         );
       }
     });
@@ -39,17 +44,17 @@ export class Google extends Webpage {
   }
 }
 
-export class Link {
-  private _hostname: string;
+export class SearchEngineLink {
+  private _link: Link;
   private _textElement: HTMLElement;
 
   constructor(url: string, textElement: HTMLElement) {
-    this._hostname = new URL(url).hostname;
+    this._link = { hostname: new URL(url).hostname };
     this._textElement = textElement;
   }
 
-  get hostname(): string {
-    return this._hostname;
+  get link(): Link {
+    return this._link;
   }
 
   public addSymbol(symbol: string): void {

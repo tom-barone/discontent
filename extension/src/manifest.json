@@ -17,12 +17,21 @@
   "content_scripts": [
     {
       "matches": [
-        "<all_urls>"
+        "*://*/*"
+      ],
+      "include_globs": [
+        "*://*.google.*/*"
       ],
       "js": [
         "content_scripts/index.js"
       ],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "background": {
+    "scripts": [
+      "background_scripts/index.js"
+    ],
+    "persistent": false
+  }
 }
