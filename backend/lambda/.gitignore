@@ -1,0 +1,2 @@
+# Needed so that `cargo lambda start` doesn't fall over
+target

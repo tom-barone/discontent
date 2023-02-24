@@ -1,5 +1,7 @@
+dev:
+	cd lambda && $(MAKE) dev
+
 install:
-	cd lambda && $(MAKE) install
 	cd database && $(MAKE) install
 
 build: install

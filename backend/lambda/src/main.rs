@@ -30,7 +30,6 @@ async fn setup() -> (Config, Client) {
 
     let log_level = env::var("LOG_LEVEL").expect("ERROR: Env variable LOG_LEVEL should be set");
     fmt().with_env_filter(log_level).without_time().init();
-    println!("{}", env::var("USE_LOCAL_DATABASE").unwrap());
 
     let use_local_database = env::var("USE_LOCAL_DATABASE")
         .expect("ERROR: Env variable USE_LOCAL_DATABASE should be set")

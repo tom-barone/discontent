@@ -4,8 +4,8 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
-dev:
-	cargo lambda start --no-reload
+dev: guard-TABLE_NAME guard-LOG_LEVEL guard-USE_LOCAL_DATABASE guard-RANDOMIZE_SCORES
+	cargo lambda start
 
 build:
 	cargo lambda build --release --arm64
@@ -15,3 +15,8 @@ clean:
 
 test:
 	cargo test -- --nocapture
+
+# Guard to fail the make target if the specified env variable doesn't exist
+# https://lithic.tech/blog/2020-05/makefile-wildcards
+guard-%:
+	@if [ -z '${${*}}' ]; then echo 'ERROR: variable $* not set' && exit 1; fi
