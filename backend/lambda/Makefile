@@ -1,9 +1,11 @@
-dev:
-	#ENVIRONMENT=development TABLE_NAME=Discontent cargo lambda start --no-reload
-	ENVIRONMENT=production TABLE_NAME=Discontent cargo lambda start --no-reload
+# Check if a .env file exists, and then load it
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 
-format:
-	cargo fmt
+dev:
+	cargo lambda start --no-reload
 
 build:
 	cargo lambda build --release --arm64

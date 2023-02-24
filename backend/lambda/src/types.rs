@@ -3,7 +3,14 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use validator::Validate;
 
-#[derive(Debug, Validate, Serialize, Deserialize, PartialEq)]
+#[derive(Debug)]
+pub struct Config {
+    pub table_name: String,
+    pub use_local_database: bool,
+    pub randomize_scores: bool,
+}
+
+#[derive(Debug, Validate, Serialize, Deserialize, PartialEq, Eq, Hash, Clone)]
 pub struct Link {
     #[validate(custom = "is_hostname_valid")]
     pub hostname: String,
@@ -17,7 +24,7 @@ impl Link {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum Score {
     Good,
     Bad,
