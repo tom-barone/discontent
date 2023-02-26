@@ -1,5 +1,6 @@
+import "webextension-polyfill";
+import { Browser } from "webextension-polyfill";
 import { identify } from "../search_engine";
-import * as browser from "webextension-polyfill";
 import { ScoresRequest, ScoresResponseMessage } from "../types";
 
 /* The flow of the content script is quite simple:
@@ -62,4 +63,5 @@ declare global {
   interface Window {
     hasRun: boolean;
   }
+	const browser: Browser
 }

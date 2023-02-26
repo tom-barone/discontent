@@ -1,4 +1,4 @@
-import * as browser from "webextension-polyfill";
+import "webextension-polyfill";
 import { fetchScores } from "../api";
 import { Message } from "../types";
 

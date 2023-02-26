@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
     <title>Discontent</title>
@@ -8,7 +8,11 @@
     <div class="container-fluid pb-2">
       <span class="header">
         <h1>Discontent</h1>
-        <button class="settings">
+        <button
+          class="settings"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#settings-page"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"
@@ -24,10 +28,93 @@
         </button>
       </span>
       <div>
-        <button class="vote" id="upvote">💚</button>
-        <button class="vote" id="downvote">💢</button>
+        <button type="button" class="vote btn btn-dark" id="upvote">
+          <div>💚</div>
+        </button>
+        <button type="button" class="vote btn btn-dark" id="downvote">
+          <div>💢</div>
+        </button>
       </div>
-      <script src="menu.js"></script>
     </div>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="settings-page">
+      <div class="container-fluid pb-2">
+        <span class="header">
+          <h1>Settings</h1>
+          <button
+            class="settings"
+            type="button"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="white"
+              class="bi bi-arrow-right"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
+              />
+            </svg>
+          </button>
+        </span>
+
+        <div class="custom-emoji">
+          <div class="input-group input-group-sm">
+            <span class="custom-emoji-label input-group-text">Good</span>
+            <input
+              type="text"
+              class="custom-emoji-input form-control"
+              id="settings-good"
+            />
+          </div>
+          <div
+            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div class="custom-emoji">
+          <div class="input-group input-group-sm">
+            <span class="custom-emoji-label input-group-text">Spicy</span>
+            <input
+              type="text"
+              class="custom-emoji-input form-control"
+              id="settings-controversial"
+            />
+          </div>
+          <div
+            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div class="custom-emoji">
+          <div class="input-group input-group-sm">
+            <span class="custom-emoji-label input-group-text">Bad</span>
+            <input
+              type="text"
+              class="custom-emoji-input form-control"
+              id="settings-bad"
+            />
+          </div>
+          <div
+            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            role="status"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="menu.js"></script>
   </body>
 </html>

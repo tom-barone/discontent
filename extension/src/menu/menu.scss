@@ -1,59 +1,102 @@
 @import "~bootstrap/scss/bootstrap";
 
+$background-color: rgb(21, 20, 26);
+$text-color: rgb(234, 234, 234);
+
 html,
-body {
+body,
+div.offcanvas {
 	// Size of the menu
-  width: 140px;
+	width: 140px;
+
 	// White text dark background
-  background: rgb(21, 20, 26);
-  color: rgb(234, 234, 234);
-  font-family: "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji";
+	background: $background-color;
+	color: $text-color;
+	font-family: "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+#settings-page {
+	.custom-emoji {
+		padding: 0 1rem;
+		display: flex;
+		align-items: center;
+
+		&-label, &-input {
+			padding: 0.1rem 0.4rem;
+			font-size: 0.6em;
+		}
+
+		&-input {
+			margin-right: 0.4rem;
+		}
+
+		&-spinner {
+			width: 0.7rem;
+			height: 0.7rem;
+		}
+
+		&-label {
+			width: 4em;
+
+			// Right align the text
+			display: flex;
+			flex-direction: row-reverse;
+		}
+	}
 }
 
 .header {
 	// Make the header and settings gear display on the same line
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 
 	// Touch up to align the header
-  padding: 5px 0;
+	padding: 5px 0;
 
-  h1 {
-    font-size: 10pt;
-    margin: 0;
+	h1 {
+		font-size: 10pt;
+		margin: 0;
+
 		// Vertically center the header
-    display: flex;
-    align-items: center;
-  }
+		display: flex;
+		align-items: center;
+	}
 }
 
 button {
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  font-size: 1.5em;
-  cursor: pointer;
+	border: none;
+	border-radius: 5px;
+	text-align: center;
+	font-size: 1.5em;
+	cursor: pointer;
 
-  &.vote {
-    width: 100%;
-    margin: 3% auto;
-    padding-top: 7px;
-    background-color: rgb(39, 39, 44);
-  }
+	&.vote {
+		width: 100%;
+		margin: 3% auto;
+		& div {
+			// Get the icon itself to display in the middle
+			margin-bottom: -0.1rem;
+			font-size: 1.5rem;
+		}
+	}
 
-  &.settings {
-    background-color: transparent;
-    display: flex;
-    align-items: center;
+	&.settings {
+		background-color: transparent;
+		display: flex;
+		align-items: center;
 		padding: 4px;
-  }
+	}
 
-  &:hover {
-    background-color: rgb(51, 49, 60);
-  }
+	//&:hover {
+		//background-color: rgb(51, 49, 60);
+	//}
 
-  &:active {
-    background-color: rgb(75, 74, 85);
-  }
+	//&:active {
+		//background-color: rgb(75, 74, 85);
+	//}
+}
+
+// Remove the annoying box shadow from the input fields
+.form-control:focus {
+	box-shadow: none;
 }
