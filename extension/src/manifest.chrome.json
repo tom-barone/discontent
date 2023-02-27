@@ -1,5 +1,5 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Discontent",
   "version": "1.0",
   "description": "Decorate links that are garbage",
@@ -8,9 +8,9 @@
   },
   "permissions": [
     "activeTab",
-		"storage"
+    "storage"
   ],
-  "browser_action": {
+  "action": {
     "default_icon": "icons/green_heart.png",
     "default_title": "Discontent",
     "default_popup": "menu/menu.html"
@@ -30,9 +30,6 @@
     }
   ],
   "background": {
-    "scripts": [
-      "background_scripts/index.js"
-    ],
-    "persistent": false
+    "service_worker": "background_scripts/index.js"
   }
 }

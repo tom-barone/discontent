@@ -9,7 +9,7 @@ export async function fetchScores(
   // TODO: Add production / development handling here
   const url =
     "http://localhost:9000/lambda-url/request-handler/v1/scores?" + params;
-  const response = await window.fetch(url, {
+  const response = await fetch(url, {
     method: "GET",
     headers: {
       "content-type": "application/json",
@@ -19,9 +19,9 @@ export async function fetchScores(
 
   // Try parse the response into a ScoresResponse
   // TODO: Add error handling for parse failures
-  const result: ScoresResponse = new Map<string, Score>();
+  const result = new Map<string, Score>();
   scores.forEach((link_score: any) => {
     result.set(link_score.link.hostname, link_score.score);
   });
-  return result;
+  return Object.fromEntries(result);
 }

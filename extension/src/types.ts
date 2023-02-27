@@ -8,7 +8,6 @@ declare global {
     hasRun: boolean;
     Stimulus: Application;
   }
-  const browser: Browser;
 }
 
 export interface ScoresRequestMessage {
@@ -55,4 +54,6 @@ export class ScoresRequest {
   }
 }
 
-export type ScoresResponse = Map<string, Score>;
+export type ScoresResponse = {
+  [key: string]: Score;
+};

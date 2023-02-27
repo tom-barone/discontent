@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Discontent",
+  "version": "1.0",
+  "description": "Decorate links that are garbage",
+  "icons": {
+    "48": "icons/green_heart.png"
+  },
+  "permissions": [
+    "activeTab",
+		"storage"
+  ],
+  "action": {
+    "default_icon": "icons/green_heart.png",
+    "default_title": "Discontent",
+    "default_popup": "menu/menu.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*/*"
+      ],
+      "include_globs": [
+        "*://*.google.*/*"
+      ],
+      "js": [
+        "content_scripts/index.js"
+      ],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "scripts": [
+      "background_scripts/index.js"
+    ]
+  }
+}

@@ -44,13 +44,13 @@ module.exports = {
   },
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(__dirname, "dist/firefox"),
   },
   plugins: [
     // Copy the manifest.json to the dist folder
     new CopyPlugin({
       patterns: [
-        { from: "./src/manifest.json" },
+        { from: "./src/manifest.firefox.json", to: "manifest.json" },
         { from: "./src/menu/menu.html", to: "menu/menu.html" },
         { from: "./src/icons", to: "icons" },
       ],

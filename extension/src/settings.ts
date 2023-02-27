@@ -1,3 +1,4 @@
+import * as browser from "webextension-polyfill";
 import * as uuid from "uuid";
 
 export type IconName = "good" | "controversial" | "bad";
