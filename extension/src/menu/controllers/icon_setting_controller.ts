@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import * as settings from "../../settings";
+import VotingButtonController from "./voting_button_controller";
 
 const FADE_IN_AND_OUT_TIME = 300; // milliseconds
 const FADE_OUT_CHECK_AFTER = 3; // seconds
@@ -9,6 +10,7 @@ export default class extends Controller {
   static values = {
     iconName: String,
   };
+	static outlets = [ "voting-button" ]
   declare readonly inputTarget: HTMLInputElement;
   declare readonly spinnerTarget: HTMLDivElement;
   declare readonly checkTarget: HTMLElement;
@@ -16,6 +18,7 @@ export default class extends Controller {
   declare readonly iconNameValue: settings.IconName;
   declare timer: NodeJS.Timeout;
   declare first_load: boolean;
+	declare readonly votingButtonOutlets: Array<VotingButtonController>;
 
   connect() {
     // Load icons from settings
@@ -38,6 +41,12 @@ export default class extends Controller {
       .set_icon(this.iconNameValue, this.inputTarget.value)
       .then(() => {
         this._showCheck();
+      })
+      .then(() => {
+				// Reload icons on the voting page with new changes
+        this.votingButtonOutlets.forEach((outlet) => {
+					outlet.load_icon();
+				});
       })
       .catch((error) => {
         this._showError(error);

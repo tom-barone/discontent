@@ -18,11 +18,21 @@
         </button>
       </span>
       <div>
-        <button type="button" class="vote btn btn-dark" id="upvote">
-          <div>💚</div>
+        <button
+          type="button"
+          class="btn btn-dark invisible voting-button"
+          data-controller="voting-button"
+          data-voting-button-vote-value="good"
+        >
+          <div>.</div>
         </button>
-        <button type="button" class="vote btn btn-dark" id="downvote">
-          <div>💢</div>
+        <button
+          type="button"
+          class="btn btn-dark invisible voting-button"
+          data-controller="voting-button"
+          data-voting-button-vote-value="bad"
+        >
+          <div>.</div>
         </button>
       </div>
     </div>
@@ -50,6 +60,7 @@
           class="icon-setting"
           data-controller="icon-setting"
           data-icon-setting-icon-name-value="good"
+          data-icon-setting-voting-button-outlet=".voting-button"
         >
           <div class="input-group input-group-sm">
             <span class="icon-setting-label input-group-text">Good</span>
@@ -84,6 +95,7 @@
           class="icon-setting"
           data-controller="icon-setting"
           data-icon-setting-icon-name-value="controversial"
+          data-icon-setting-voting-button-outlet=".voting-button"
         >
           <div class="input-group input-group-sm">
             <span class="icon-setting-label input-group-text">Spicy</span>
@@ -118,6 +130,7 @@
           class="icon-setting"
           data-controller="icon-setting"
           data-icon-setting-icon-name-value="bad"
+          data-icon-setting-voting-button-outlet=".voting-button"
         >
           <div class="input-group input-group-sm">
             <span class="icon-setting-label input-group-text">Bad</span>
@@ -155,7 +168,11 @@
           >
             Reset
           </button>
-          <a href="https://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">Icon list</a>
+          <a
+            href="https://unicode.org/emoji/charts/full-emoji-list.html"
+            target="_blank"
+            >Icon list</a
+          >
         </div>
       </div>
     </div>
