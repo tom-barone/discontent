@@ -23,7 +23,5 @@ export async function fetchScores(
   scores.forEach((link_score: any) => {
     result.set(link_score.link.hostname, link_score.score);
   });
-  console.log(result);
-
   return result;
 }

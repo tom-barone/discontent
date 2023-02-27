@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-bs-theme="dark">
+<html lang="en" data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
     <title>Discontent</title>
@@ -9,22 +9,12 @@
       <span class="header">
         <h1>Discontent</h1>
         <button
-          class="settings"
+          class="btn btn-dark settings"
+          type="button"
           data-bs-toggle="offcanvas"
           data-bs-target="#settings-page"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="white"
-            class="bi bi-gear-fill"
-            viewBox="0 0 16 16"
-          >
-            <path
-              d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
-            />
-          </svg>
+          <i class="bi bi-gear-fill"></i>
         </button>
       </span>
       <div>
@@ -37,81 +27,135 @@
       </div>
     </div>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="settings-page">
+    <div
+      class="offcanvas offcanvas-end"
+      tabindex="-1"
+      id="settings-page"
+      data-controller="settings-page"
+    >
       <div class="container-fluid pb-2">
         <span class="header">
           <h1>Settings</h1>
           <button
-            class="settings"
+            class="btn btn-dark settings"
             type="button"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="white"
-              class="bi bi-arrow-right"
-              viewBox="0 0 16 16"
-            >
-              <path
-                fill-rule="evenodd"
-                d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"
-              />
-            </svg>
+            <i class="bi bi-arrow-right"></i>
           </button>
         </span>
 
-        <div class="custom-emoji">
+        <div
+          class="icon-setting"
+          data-controller="icon-setting"
+          data-icon-setting-icon-name-value="good"
+        >
           <div class="input-group input-group-sm">
-            <span class="custom-emoji-label input-group-text">Good</span>
+            <span class="icon-setting-label input-group-text">Good</span>
             <input
               type="text"
-              class="custom-emoji-input form-control"
-              id="settings-good"
+              class="icon-setting-input form-control"
+              data-icon-setting-target="input"
+              data-settings-page-target="goodInput"
+              data-action="icon-setting#update"
+              maxlength="3"
             />
           </div>
           <div
-            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            class="icon-setting-spinner spinner-border spinner-border-sm text-light d-none"
             role="status"
+            data-icon-setting-target="spinner"
           >
             <span class="visually-hidden">Loading...</span>
           </div>
+          <i
+            class="icon-setting-check bi bi-check d-none"
+            data-icon-setting-target="check"
+          ></i>
+          <i
+            class="icon-setting-error bi bi-exclamation-triangle d-none"
+            title="Invalid icon"
+            data-icon-setting-target="error"
+          ></i>
         </div>
 
-        <div class="custom-emoji">
+        <div
+          class="icon-setting"
+          data-controller="icon-setting"
+          data-icon-setting-icon-name-value="controversial"
+        >
           <div class="input-group input-group-sm">
-            <span class="custom-emoji-label input-group-text">Spicy</span>
+            <span class="icon-setting-label input-group-text">Spicy</span>
             <input
               type="text"
-              class="custom-emoji-input form-control"
-              id="settings-controversial"
+              class="icon-setting-input form-control"
+              data-icon-setting-target="input"
+              data-settings-page-target="controversialInput"
+              data-action="icon-setting#update"
+              maxlength="3"
             />
           </div>
           <div
-            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            class="icon-setting-spinner spinner-border spinner-border-sm text-light d-none"
             role="status"
+            data-icon-setting-target="spinner"
           >
             <span class="visually-hidden">Loading...</span>
           </div>
+          <i
+            class="icon-setting-check bi bi-check d-none"
+            data-icon-setting-target="check"
+          ></i>
+          <i
+            class="icon-setting-error bi bi-exclamation-triangle d-none"
+            title="Invalid icon"
+            data-icon-setting-target="error"
+          ></i>
         </div>
 
-        <div class="custom-emoji">
+        <div
+          class="icon-setting"
+          data-controller="icon-setting"
+          data-icon-setting-icon-name-value="bad"
+        >
           <div class="input-group input-group-sm">
-            <span class="custom-emoji-label input-group-text">Bad</span>
+            <span class="icon-setting-label input-group-text">Bad</span>
             <input
               type="text"
-              class="custom-emoji-input form-control"
-              id="settings-bad"
+              class="icon-setting-input form-control"
+              data-icon-setting-target="input"
+              data-settings-page-target="badInput"
+              data-action="icon-setting#update"
+              maxlength="3"
             />
           </div>
           <div
-            class="custom-emoji-spinner spinner-border spinner-border-sm text-light"
+            class="icon-setting-spinner spinner-border spinner-border-sm text-light d-none"
             role="status"
+            data-icon-setting-target="spinner"
           >
             <span class="visually-hidden">Loading...</span>
           </div>
+          <i
+            class="icon-setting-check bi bi-check d-none"
+            data-icon-setting-target="check"
+          ></i>
+          <i
+            class="icon-setting-error bi bi-exclamation-triangle d-none"
+            title="Invalid icon"
+            data-icon-setting-target="error"
+          ></i>
+        </div>
+        <div class="reset-button-and-link">
+          <button
+            class="btn btn-small btn-dark"
+            type="button"
+            data-action="settings-page#reset"
+          >
+            Reset
+          </button>
+          <a href="https://unicode.org/emoji/charts/full-emoji-list.html" target="_blank">Icon list</a>
         </div>
       </div>
     </div>

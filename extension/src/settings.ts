@@ -1,16 +1,30 @@
 import * as uuid from "uuid";
 
 export type IconName = "good" | "controversial" | "bad";
-const DEFAULT_ICONS = {
+export const DEFAULT_ICONS = {
   good: "💚",
   controversial: "🤨",
   bad: "💢",
 };
 
+export async function get_icons() {
+  return Promise.all([
+    get_icon("good"),
+    get_icon("controversial"),
+    get_icon("bad"),
+  ]).then((values) => {
+    return {
+      good: values[0],
+      controversial: values[1],
+      bad: values[2],
+    };
+  });
+}
+
 export async function get_icon(icon_name: IconName) {
   return browser.storage.local.get(icon_name).then(async (settings) => {
     if (is_valid_emoji(settings[icon_name])) {
-      return settings[icon_name];
+      return settings[icon_name] as string;
     } else {
       // Save the default icon to storage if it's not valid
       return set_icon(icon_name, DEFAULT_ICONS[icon_name]);

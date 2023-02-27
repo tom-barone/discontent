@@ -1,20 +1,10 @@
+// src/application.js
+import { Application } from "@hotwired/stimulus";
+import IconSettingController from "./controllers/icon_setting_controller";
+import SettingsPageController from "./controllers/settings_page_controller";
 import "./menu.scss";
 import "bootstrap";
-import * as settings from "../settings";
 
-
-(() => {
-  // Add code to handle the button clicks
-  // Use Stimulus https://stimulus.hotwired.dev/
-
-  settings.get_icon("good").then((icon) => {
-    (document.getElementById("settings-good") as HTMLInputElement).value = icon;
-  });
-  settings.get_icon("controversial").then((icon) => {
-    (document.getElementById("settings-controversial") as HTMLInputElement).value = icon;
-  });
-  settings.get_icon("bad").then((icon) => {
-    (document.getElementById("settings-bad") as HTMLInputElement).value = icon;
-  });
-
-})();
+window.Stimulus = Application.start();
+window.Stimulus.register("icon-setting", IconSettingController);
+window.Stimulus.register("settings-page", SettingsPageController);

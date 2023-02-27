@@ -1,7 +1,7 @@
 import "webextension-polyfill";
-import { Browser } from "webextension-polyfill";
 import { identify } from "../search_engine";
 import { ScoresRequest, ScoresResponseMessage } from "../types";
+import * as settings from "../settings";
 
 /* The flow of the content script is quite simple:
  * 	 1. Check if the content script has already run
@@ -26,42 +26,38 @@ import { ScoresRequest, ScoresResponseMessage } from "../types";
 
   // Step 3
   const search_engine_links = search_engine.getAllLinks();
-	if (search_engine_links.length === 0) {
-		return;
-	}
+  if (search_engine_links.length === 0) {
+    return;
+  }
 
   // Step 4
-  browser.runtime
-    .sendMessage({
+  Promise.all([
+    settings.get_icons(),
+    browser.runtime.sendMessage({
       type: "ScoresRequest",
       data: new ScoresRequest(search_engine_links),
-    })
-    .then((message: ScoresResponseMessage) => {
-      const scoresResponse = message.data;
-      // Step 5
-      search_engine_links.forEach((search_engine_link) => {
-        switch (scoresResponse.get(search_engine_link.link.hostname)) {
-          case "Good":
-            search_engine_link.addSymbol("💚");
-            break;
-          case "Bad":
-            search_engine_link.addSymbol("💢");
-            break;
-          case "Controversial":
-            search_engine_link.addSymbol("🤨");
-            break;
-          case "NoScore":
-          default:
-          // Do nothing
-        }
-      });
+    }),
+  ]).then(([icons, message]) => {
+    const scoresResponse = (message as ScoresResponseMessage).data;
+    // Step 5
+    search_engine_links.forEach((search_engine_link) => {
+      switch (scoresResponse.get(search_engine_link.link.hostname)) {
+        case "Good":
+          search_engine_link.addSymbol(icons.good);
+          break;
+        case "Controversial":
+          search_engine_link.addSymbol(icons.controversial);
+          break;
+        case "Bad":
+          search_engine_link.addSymbol(icons.bad);
+          break;
+        case "NoScore":
+        default:
+        // Do nothing
+      }
     });
+  }).catch((error) => {
+		// TODO: Handle the error somehow
+		console.error(error);
+	});
 })();
-
-declare global {
-  // So typescript doesn't complain about tiny `hasRun` boolean
-  interface Window {
-    hasRun: boolean;
-  }
-	const browser: Browser
-}

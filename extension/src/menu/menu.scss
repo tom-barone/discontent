@@ -1,4 +1,5 @@
 @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
 
 $background-color: rgb(21, 20, 26);
 $text-color: rgb(234, 234, 234);
@@ -6,97 +7,132 @@ $text-color: rgb(234, 234, 234);
 html,
 body,
 div.offcanvas {
-	// Size of the menu
-	width: 140px;
+  // Size of the menu
+  width: 140px;
 
-	// White text dark background
-	background: $background-color;
-	color: $text-color;
-	font-family: "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  // White text dark background
+  background: $background-color;
+  color: $text-color;
+  font-family: "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+i.bi {
+  // Vertically center all icons
+  line-height: 0;
+
+  &.bi-check {
+    color: green;
+  }
+
+  &.bi-exclamation-triangle {
+    color: yellow;
+  }
 }
 
 #settings-page {
-	.custom-emoji {
-		padding: 0 1rem;
-		display: flex;
-		align-items: center;
+  .icon-setting {
+    padding: 0.1rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-		&-label, &-input {
-			padding: 0.1rem 0.4rem;
-			font-size: 0.6em;
-		}
+    .input-group {
+      // Fix display of status icons next to the input group
+      width: fit-content;
+    }
 
-		&-input {
-			margin-right: 0.4rem;
-		}
+    &-label,
+    &-input {
+      padding: 0.1rem 0.4rem;
+      font-size: 0.8em;
+    }
 
-		&-spinner {
-			width: 0.7rem;
-			height: 0.7rem;
-		}
+    &-input {
+      margin-right: 0.4rem;
+      max-width: 2.5rem;
+      width: 2.5rem;
+      text-align: center;
+    }
 
-		&-label {
-			width: 4em;
+    &-spinner {
+      width: 0.7rem;
+      height: 0.7rem;
+    }
 
-			// Right align the text
-			display: flex;
-			flex-direction: row-reverse;
-		}
-	}
+    &-label {
+      width: 3rem;
+
+      // Right align the text
+      display: flex;
+      flex-direction: row-reverse;
+    }
+  }
+
+  .reset-button-and-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    button {
+      font-size: 0.8em;
+      padding: 0.1em 0.6em;
+      margin-top: 0.4em;
+    }
+
+    a {
+      font-size: 0.6em;
+    }
+  }
 }
 
 .header {
-	// Make the header and settings gear display on the same line
-	display: flex;
-	justify-content: space-between;
+  // Make the header and settings gear display on the same line
+  display: flex;
+  justify-content: space-between;
 
-	// Touch up to align the header
-	padding: 5px 0;
+  // Touch up to align the header
+  padding: 5px 0;
 
-	h1 {
-		font-size: 10pt;
-		margin: 0;
+  h1 {
+    font-size: 10pt;
+    margin: 0;
 
-		// Vertically center the header
-		display: flex;
-		align-items: center;
-	}
+    // Vertically center the header
+    display: flex;
+    align-items: center;
+  }
+
+  button.settings {
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    line-height: 0;
+    font-size: 1rem;
+    color: $text-color;
+  }
 }
 
 button {
-	border: none;
-	border-radius: 5px;
-	text-align: center;
-	font-size: 1.5em;
-	cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1.5em;
+  cursor: pointer;
 
-	&.vote {
-		width: 100%;
-		margin: 3% auto;
-		& div {
-			// Get the icon itself to display in the middle
-			margin-bottom: -0.1rem;
-			font-size: 1.5rem;
-		}
-	}
+  &.vote {
+    width: 100%;
+    margin: 3% auto;
 
-	&.settings {
-		background-color: transparent;
-		display: flex;
-		align-items: center;
-		padding: 4px;
-	}
-
-	//&:hover {
-		//background-color: rgb(51, 49, 60);
-	//}
-
-	//&:active {
-		//background-color: rgb(75, 74, 85);
-	//}
+    & div {
+      // Get the icon itself to display in the middle
+      margin-bottom: -0.1rem;
+      font-size: 1.5rem;
+    }
+  }
 }
 
 // Remove the annoying box shadow from the input fields
 .form-control:focus {
-	box-shadow: none;
+  box-shadow: none;
 }

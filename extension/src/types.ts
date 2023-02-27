@@ -1,4 +1,15 @@
 import { SearchEngineLink } from "./search_engine";
+import { Browser } from "webextension-polyfill";
+import { Application } from "@hotwired/stimulus";
+
+declare global {
+  // So typescript doesn't complain about tiny `hasRun` boolean
+  interface Window {
+    hasRun: boolean;
+    Stimulus: Application;
+  }
+  const browser: Browser;
+}
 
 export interface ScoresRequestMessage {
   type: "ScoresRequest";
