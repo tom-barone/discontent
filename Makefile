@@ -13,6 +13,12 @@ install:
 dev: install
 	$(MAKE) --jobs=2 dev-extension dev-backend
 
+test:
+	cd extension && $(MAKE) test
+	cd backend/lambda && $(MAKE) test
+	cd integration_tests && $(MAKE) test
+	@echo 'Tests succeeded'
+
 # Secondary targets
 
 dev-extension:

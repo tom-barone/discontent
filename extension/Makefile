@@ -13,11 +13,14 @@ dev: guard-NODE_ENV guard-BROWSER
 	$(MAKE) build
 	$(MAKE) -j 2 dev-webpack-watch dev-$(BROWSER)-extension
 
-build: guard-NODE_ENV guard-BROWSER clean install
+build: guard-NODE_ENV guard-BROWSER install
 	npx webpack --config webpack.$(BROWSER).config.js
 
 clean:
 	rm -rf dist
+
+test: install
+	npx jest
 
 # Secondary targets
 
@@ -31,7 +34,7 @@ dev-firefox-extension:
 dev-chrome-extension:
 	# Open up chrome with the extension loaded and two tabs that are helpful for development
 	# TODO: Not very system independent :(
-	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter chrome://extensions/
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter chrome://extensions/ chrome-extension://kglbdhongcfkafgfgofpgaehafnbgnhd/menu/menu.html
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards

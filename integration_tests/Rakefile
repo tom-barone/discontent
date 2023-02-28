@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+require 'minitest/test_task'
+
+# Setup the `rake test` command
+Minitest::TestTask.create(:test) do |t|
+  t.libs << 'test'
+  t.warning = false
+  t.test_globs = ['test/**/*.rb']
+end
+
+task default: :test

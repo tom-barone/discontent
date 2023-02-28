@@ -31,5 +31,6 @@
   ],
   "background": {
     "service_worker": "background_scripts/index.js"
-  }
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4VcYvE9S56OTCkJfJp5P2U42/rl9ANnGgIGFmvEA2QwToqtLPjy3bm19OAL5ENLL0qR8C3BNOo05IjpL9U09dsau/9te+ctg38+o7ixn3/FzOTK4RbKVtsW+VtOriZMqi2PTVHKZFbQAXDacAJ1xHrhC0bf12WA4UQKiA8visG/sGBO0SF/d/e/60u/+FpQ48ofCrLFOpKQ6B3VeNFHfVE4GgilzUa1pmguI/8ThanHluj0yWcysQI65Hk5dQCd6R5I/ZJz+vI4OgIE9z4H8RGJ9tpf9uKgPQ9vbn7HpPvkRTZFN+rwPysnA6YacIIzVM4XtOUznm12HWI4NR57ERwIDAQAB"
 }

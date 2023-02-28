@@ -5,9 +5,14 @@ ifneq (,$(wildcard ./.env))
 endif
 
 dev: guard-TABLE_NAME guard-LOG_LEVEL guard-USE_LOCAL_DATABASE guard-RANDOMIZE_SCORES
-	cargo lambda start
+	# Send a ping after 3 seconds to the cargo-lambda server to wake it up
+	sleep 3 && curl "http://localhost:9000/lambda-url/request-handler/v1" &
+	cargo lambda watch
 
-build:
+build-dev:
+	cargo build
+
+build-release:
 	cargo lambda build --release --arm64
 
 clean:
