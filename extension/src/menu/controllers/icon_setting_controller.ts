@@ -1,5 +1,6 @@
+import * as browser from "webextension-polyfill";
 import { Controller } from "@hotwired/stimulus";
-import * as settings from "../../settings";
+import { Settings, IconName } from "../../settings";
 import VotingButtonController from "./voting_button_controller";
 
 const FADE_IN_AND_OUT_TIME = 300; // milliseconds
@@ -15,15 +16,17 @@ export default class extends Controller {
   declare readonly spinnerTarget: HTMLDivElement;
   declare readonly checkTarget: HTMLElement;
   declare readonly errorTarget: HTMLElement;
-  declare readonly iconNameValue: settings.IconName;
+  declare readonly iconNameValue: IconName;
   declare timer: NodeJS.Timeout;
   declare first_load: boolean;
 	declare readonly votingButtonOutlets: Array<VotingButtonController>;
+	declare settings: Settings;
 
   connect() {
+		this.settings = new Settings(browser);
     // Load icons from settings
     this._showSpinner();
-    settings
+    this.settings
       .get_icon(this.iconNameValue)
       .then((icon) => {
         // Don't want to show the check mark on the first load
@@ -37,7 +40,7 @@ export default class extends Controller {
 
   update() {
     this._showSpinner();
-    settings
+    this.settings
       .set_icon(this.iconNameValue, this.inputTarget.value)
       .then(() => {
         this._showCheck();

@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import * as settings from "../../settings";
+import { DEFAULT_ICONS } from "../../settings";
 
 export default class extends Controller {
   static targets = ["goodInput", "controversialInput", "badInput"];
@@ -8,12 +8,12 @@ export default class extends Controller {
   declare readonly badInputTarget: HTMLInputElement;
 
   reset() {
-    this.goodInputTarget.value = settings.DEFAULT_ICONS.good;
-    this.controversialInputTarget.value = settings.DEFAULT_ICONS.controversial;
-    this.badInputTarget.value = settings.DEFAULT_ICONS.bad;
+    this.goodInputTarget.value = DEFAULT_ICONS.good;
+    this.controversialInputTarget.value = DEFAULT_ICONS.controversial;
+    this.badInputTarget.value = DEFAULT_ICONS.bad;
 
-		this.goodInputTarget.dispatchEvent(new Event('input'));
-		this.controversialInputTarget.dispatchEvent(new Event('input'));
-		this.badInputTarget.dispatchEvent(new Event('input'));
+    this.goodInputTarget.dispatchEvent(new Event("input"));
+    this.controversialInputTarget.dispatchEvent(new Event("input"));
+    this.badInputTarget.dispatchEvent(new Event("input"));
   }
 }

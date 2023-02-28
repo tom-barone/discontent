@@ -1,7 +1,7 @@
 import * as browser from "webextension-polyfill";
 import { identify } from "../search_engine";
 import { ScoresRequest, ScoresResponseMessage } from "../types";
-import * as settings from "../settings";
+import { Settings } from "../settings";
 
 /* The flow of the content script is quite simple:
  * 	 1. Check if the content script has already run
@@ -31,6 +31,7 @@ import * as settings from "../settings";
   }
 
   // Step 4
+	const settings = new Settings(browser);
   Promise.all([
     settings.get_icons(),
     browser.runtime.sendMessage({
