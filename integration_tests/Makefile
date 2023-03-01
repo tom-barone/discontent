@@ -10,12 +10,13 @@ install:
 	bundle install
 
 test: guard-CHROME_EXTENSION_ID install
-	$(MAKE) start_lambda
-	@echo "Wait 10 seconds for the lambda to start"
-	sleep 10
-	@echo "Run the tests"
+	@echo "Check that the lambda is running"
+	@curl localhost:9000 || (echo "You may need to run 'make start_lambda'" && exit 1)
+	@echo "Build the lambda so it is ready to run during tests"
 	rake test
-	$(MAKE) stop_lambda
+
+clean:
+	rm -rf ci
 
 # Secondary targets
 
@@ -24,6 +25,8 @@ start_lambda:
 	cd ../backend/lambda && $(MAKE) build-dev
 	@echo "Spawn an instance of the lambda in the background"
 	cd ../backend/lambda && $(MAKE) dev &
+	@echo "Wait 10 seconds for the lambda to start"
+	sleep 10
 
 stop_lambda:
 	pkill cargo-lambda

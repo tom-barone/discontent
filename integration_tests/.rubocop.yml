@@ -1,0 +1,18 @@
+AllCops:
+  TargetRubyVersion: 3.1.2
+
+Style/Documentation:
+  Exclude:
+    - "**/*.rb"
+Metrics/MethodLength:
+  Exclude:
+    - "**/*.rb"
+Metrics/AbcSize:
+  Exclude:
+    - "**/*.rb"
+Metrics/ClassLength:
+  Exclude:
+    - "**/*.rb"
+Metrics/BlockLength:
+  Exclude:
+    - "**/*.rb"

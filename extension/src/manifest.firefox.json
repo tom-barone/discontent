@@ -8,7 +8,7 @@
   },
   "permissions": [
     "activeTab",
-		"storage"
+    "storage"
   ],
   "action": {
     "default_icon": "icons/green_heart.png",
@@ -33,5 +33,10 @@
     "scripts": [
       "background_scripts/index.js"
     ]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{3f504997-80b7-467d-9d7b-e2fbb6d55e34}"
+    }
   }
 }
