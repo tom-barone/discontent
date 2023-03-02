@@ -9,12 +9,11 @@ endif
 install:
 	npm install
 
-dev: guard-NODE_ENV guard-BROWSER
-	$(MAKE) build
+dev: guard-BROWSER
 	$(MAKE) -j 2 dev-webpack-watch dev-$(BROWSER)-extension
 
-build: guard-NODE_ENV guard-BROWSER install
-	npx webpack --config webpack.$(BROWSER).config.js
+build: guard-BROWSER install
+	npx webpack --mode production --config webpack.$(BROWSER).config.js
 
 clean:
 	rm -rf dist
@@ -24,8 +23,8 @@ test: install
 
 # Secondary targets
 
-dev-webpack-watch: guard-NODE_ENV guard-BROWSER
-	npx webpack --watch --config webpack.$(BROWSER).config.js
+dev-webpack-watch: guard-BROWSER
+	npx webpack --mode development --watch --config webpack.$(BROWSER).config.js
 
 dev-firefox-extension:
 	# Open up firefox with the extension loaded and two tabs that are helpful for development

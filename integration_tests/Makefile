@@ -20,7 +20,7 @@ clean:
 
 # Secondary targets
 
-start_lambda:
+start-lambda:
 	@echo "Build the lambda so it is ready to run during tests"
 	cd ../backend/lambda && $(MAKE) build-dev
 	@echo "Spawn an instance of the lambda in the background"
@@ -28,7 +28,7 @@ start_lambda:
 	@echo "Wait 10 seconds for the lambda to start"
 	sleep 10
 
-stop_lambda:
+stop-lambda:
 	pkill cargo-lambda
 
 # Guard to fail the make target if the specified env variable doesn't exist
