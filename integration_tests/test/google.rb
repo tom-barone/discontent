@@ -3,12 +3,14 @@
 require_relative '../setup'
 
 class TestGoogle < CapybaraTestCase
-  def test_can_display_some_icons
-    visit('https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter')
-    assert_text(/What.+/)
-    assert_text(/💚.+/)
-    # assert_text(/🤔.+/)
-    # assert_text(/💚.+/)
-    # assert_text(/💢.+/)
+  # Right now doesn't work on Firefox
+  %i[chrome].each do |browser|
+    define_method("test_#{browser}_displays_icons_on_links") do
+      Capybara.current_driver = browser
+      visit('https://www.google.com/search?q=github+en.wikipedia+twitter')
+      assert_text(:all, /💚 .+/)
+      assert_text(:all, /🤨 .+/)
+      assert_text(:all, /💢 .+/)
+    end
   end
 end

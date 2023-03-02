@@ -3,8 +3,8 @@
 install:
 	poetry install
 
-dev: install start-local-database
-	cd lambda && $(MAKE) dev
+dev: stop-local-database stop-lambda
+	$(MAKE) --jobs=3 start-lambda start-local-database load-database-fixtures
 
 test:
 	poetry run python -m unittest discover
@@ -31,18 +31,23 @@ seed: install seed/hacker_news_submissions seed/seed.csv
 
 # Secondary targets
 
-start-local-database: docker/dynamodb/shared-local-instance.db
+load-database-fixtures: install
+	poetry run python database.py setup
+	@echo "\nREADY"
+
+start-lambda:
+	cd lambda && $(MAKE) dev
+
+stop-lambda:
+	pkill cargo-lambda || true
+
+start-local-database: 
+	@echo "Start the local database"
+	docker-compose up
 
 stop-local-database:
 	docker-compose down
 	rm -rf docker
-
-docker/dynamodb/shared-local-instance.db:
-	@echo "Start the local database"
-	docker-compose up -d
-	sleep 1 # Give a second for the local database to start
-	@echo "Load the database fixtures"
-	poetry run python database.py setup
 
 seed/hacker_news_submissions:
 	# Fetch the hacker news submissions from S3
