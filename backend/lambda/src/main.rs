@@ -69,6 +69,8 @@ async fn root_handler(
     let response: Result<Body, Error>;
     if path == "/v1/scores" && method == &Method::GET {
         response = scores(request, &config, &dynamo_db_client).await;
+    } else if path == "/v1/vote" && method == &Method::POST {
+        response = vote(request, &config, &dynamo_db_client).await;
     } else {
         return not_found();
     }
@@ -94,6 +96,9 @@ fn success(body: Body) -> Result<Response<Body>, Error> {
     Ok(Response::builder()
         .status(StatusCode::OK)
         .header("content-type", "application/json")
+        .header("Access-Control-Allow-Headers", "*")
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Methods", "POST, GET")
         .body(body)
         .unwrap())
 }

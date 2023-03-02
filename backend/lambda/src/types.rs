@@ -1,6 +1,5 @@
 use crate::validate::*;
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use validator::Validate;
 
 #[derive(Debug)]
@@ -47,8 +46,19 @@ impl LinkScore {
 
 pub mod api {
     use super::{Link, LinkScore};
+    use crate::validate::is_vote_value_valid;
     use serde::{Deserialize, Serialize};
+    use uuid::Uuid;
     use validator::Validate;
+
+    #[derive(Debug, Validate, Deserialize, PartialEq)]
+    pub struct VoteRequest {
+        #[validate]
+        pub link: Link,
+        #[validate(custom = "is_vote_value_valid")]
+        pub vote_value: i32,
+        pub user_id: Uuid,
+    }
 
     #[derive(Debug, Validate, Deserialize, Serialize, PartialEq)]
     pub struct ScoresRequest {
@@ -95,7 +105,7 @@ pub mod database {
         #[validate]
         pub link: super::Link,
         pub count_of_votes: u32,
-        pub sum_of_votes: u32,
+        pub sum_of_votes: i32,
     }
     impl TryFrom<&HashMap<String, AttributeValue>> for LinkDetail {
         type Error = Error;
@@ -117,7 +127,7 @@ pub mod database {
                 .ok_or("No sum_of_votes")?
                 .as_n()
                 .or(Err("sum_of_votes is not a number"))?
-                .parse::<u32>()?;
+                .parse::<i32>()?;
 
             Ok(LinkDetail {
                 link,
@@ -126,24 +136,6 @@ pub mod database {
             })
         }
     }
-}
-
-// TODO: Rename to VoteRequest or something
-#[derive(Debug, Validate, Deserialize, PartialEq)]
-pub struct Vote {
-    #[validate]
-    pub link: Link,
-    #[validate(custom = "is_vote_value_valid")]
-    pub vote_value: i32,
-    pub user_id: Uuid,
-}
-
-#[derive(Debug, Validate, Deserialize, PartialEq)]
-pub struct AdminVote {
-    #[validate]
-    pub vote: Vote,
-    #[validate(custom = "is_timestamp_valid")]
-    pub timestamp: String,
 }
 
 //#[cfg(test)]

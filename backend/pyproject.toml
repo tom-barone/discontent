@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "database"
+name = "discontent-backend"
 version = "0.1.0"
-description = "Scripts to manage the Discontent database"
+description = "Python environment to manage the Discontent backend"
 authors = ["Tom Barone <mail@tombarone.net>"]
 readme = "README.md"
 
@@ -16,7 +16,7 @@ pandas = "^1.5.3"
 boto3 = "^1.24.66"
 aiohttp = "^3.8.3"
 asyncio = "^3.4.3"
-dynamodump = "^1.7.0"
+cfn-flip = "^1.3.0"
 
 
 [build-system]

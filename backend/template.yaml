@@ -97,24 +97,27 @@ Resources:
       Timeout: 5
       CodeUri: lambda/target/lambda/request-handler
       Events:
-        PostAdminSettings:
+        GetScores:
           Type: Api
           Properties:
-            Path: /admin/settings
-            Method: post
+            Path: /scores
+            Method: get
             RestApiId: !Ref ApiGateway
-        PostAdminVote:
+        PostVote:
           Type: Api
           Properties:
-            Path: /admin/vote
+            Path: /vote
             Method: post
             RestApiId: !Ref ApiGateway
       Environment:
         Variables:
           TABLE_NAME: !Ref Database
           ENVIRONMENT: production
+          LOG_LEVEL: info
+          USE_LOCAL_DATABASE: false
+          RANDOMIZE_SCORES: false
       Policies:
-        - DynamoDBWritePolicy: # More info about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+        - DynamoDBCrudPolicy: # More info about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
             TableName: !Ref Database
 
   ApiGateway:

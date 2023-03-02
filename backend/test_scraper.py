@@ -61,7 +61,8 @@ class TestScraper(unittest.TestCase):
             ('https://zapier.com/blog/secondments-at-zapier/', 91)
         ]
 
-        with open('test/hacker_news_front_2023_01_11.html', 'r') as f:
+        with open('fixtures/scraper/hacker_news_front_2023_01_11.html',
+                  'r') as f:
             html = f.read()
             soup = BeautifulSoup(html, 'html.parser')
 

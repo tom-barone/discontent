@@ -1,7 +1,6 @@
 use crate::types::api;
-use chrono::prelude::*;
-use lambda_http::aws_lambda_events::query_map::QueryMap;
 use lambda_http::Error;
+use lambda_http::{aws_lambda_events::query_map::QueryMap, Body};
 use lazy_static::lazy_static;
 use regex::Regex;
 use validator::{Validate, ValidationError};
@@ -15,20 +14,15 @@ pub fn validate_get_scores_request(query_map: QueryMap) -> Result<api::ScoresReq
     Ok(links)
 }
 
+pub fn validate_vote_request(body: &Body) -> Result<api::VoteRequest, Error> {
+    let vote_request = serde_json::from_slice::<api::VoteRequest>(body)?;
+    vote_request.validate()?;
+    Ok(vote_request)
+}
+
 lazy_static! {
     // For timestamps in the format "2023-02-02T09:36:03Z"
     static ref TIMESTAMP_REGEX: Regex = Regex::new(r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$").unwrap();
-}
-
-pub fn is_timestamp_valid(timestamp: &String) -> Result<(), ValidationError> {
-    if (!TIMESTAMP_REGEX.is_match(&timestamp))
-        || (DateTime::parse_from_rfc3339(&timestamp).is_err())
-    {
-        return Err(ValidationError::new(
-            "Timestamp should be in the RFC3339 format 2023-02-02T09:36:03Z",
-        ));
-    }
-    Ok(())
 }
 
 pub fn is_vote_value_valid(vote_value: i32) -> Result<(), ValidationError> {
@@ -166,33 +160,6 @@ mod tests {
             assert_eq!(
                 is_vote_value_valid(invalid_vote),
                 Err(ValidationError::new("Vote should be -1 or 1"))
-            );
-        }
-    }
-
-    #[test]
-    fn test_is_timestamp_valid() {
-        // Valid timestamps
-        for timestamp in &["VaLiD-HoStNaMe"] {
-            assert_eq!(is_hostname_valid(timestamp), Ok(()));
-        }
-
-        // Invalid timestamps
-        for invalid_timestamp in &[
-            "2023-02-0209:36:03Z",
-            "a2023-02-02T09:36:03Z",
-            "2023-02-02T09:3603Z",
-            "2023-02-02T09:36:03UTC",
-            "2023-99-02T09:36:03Z",
-            "2023-09-02T99:36:03Z",
-            "2023:09:02T09:36:03Z",
-            "2020-12-31 21:07:14-05:00",
-        ] {
-            assert_eq!(
-                is_timestamp_valid(&invalid_timestamp.to_string()),
-                Err(ValidationError::new(
-                    "Timestamp should be in the RFC3339 format 2023-02-02T09:36:03Z"
-                ))
             );
         }
     }

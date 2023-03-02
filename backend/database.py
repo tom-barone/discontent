@@ -1,16 +1,17 @@
 import fire
 import boto3
-import json
 import csv
-# import requests
+from cfn_tools import load_yaml
+import yaml
+import requests
 # import aiohttp
 import glob
 import pandas as pd
 from urllib.parse import urlparse
+from tqdm import tqdm
 
-# TODO: change this to use the template.yaml file
-CONFIG_FILE = 'config/Database-CloudFormation-Model.json'
-API_ENDPOINT = 'http://localhost:9000/lambda-url/request-handler/v1'
+CONFIG_FILE = './template.yaml'
+API_ENDPOINT = 'http://localhost:9000/lambda-url/request-handler'
 
 dynamodb = boto3.client(
     'dynamodb',
@@ -34,6 +35,35 @@ def drop():
     for table in dynamodb.list_tables()['TableNames']:
         dynamodb.delete_table(TableName=table)
         dynamodb.get_waiter('table_not_exists').wait(TableName=table)
+
+
+def generate_from_fixtures():
+    fixtures = yaml.safe_load(open('fixtures/database.yaml'))
+    for link_detail in tqdm(fixtures['links']):
+        count_of_votes = link_detail['count_of_votes']
+        sum_of_votes = link_detail['sum_of_votes']
+        link = link_detail['link']
+
+        # Generate votes to fit the count and sum
+        temp_sum = 0
+        vote_value = 0
+        for i in tqdm(range(count_of_votes)):
+            if temp_sum <= sum_of_votes:
+                vote_value = 1
+                temp_sum += 1
+            else:
+                vote_value = -1
+                temp_sum -= 1
+            vote = {
+                "link": {
+                    "hostname": link
+                },
+                "vote_value": vote_value,
+                # Generate a UUID, <3 bel
+                "user_id": f"BEDA{i:04}-4822-4342-0990-b92d94d9489a",
+            }
+            response = requests.post(f'{API_ENDPOINT}/v1/vote', json=vote)
+            response.raise_for_status()
 
 
 # def seed():
@@ -167,6 +197,7 @@ def generate_seed_data(input_files, output):
 def setup():
     drop()
     create()
+    generate_from_fixtures()
     # print(table['TableNames'])
     # print(dynamodb.delete_table(TableName=table))
 
@@ -219,11 +250,10 @@ def setup():
 
 def _load_config():
     with open(CONFIG_FILE) as f:
-        config = json.load(f)
-        table_name = list(config['Resources'].keys())[0]
-        properties = config['Resources'][table_name]['Properties']
+        config = load_yaml(f)
+        properties = config['Resources']['Database']['Properties']
         return {
-            'TableName': table_name,
+            'TableName': properties['TableName'],
             'KeySchema': properties['KeySchema'],
             'AttributeDefinitions': properties['AttributeDefinitions'],
             'GlobalSecondaryIndexes': properties['GlobalSecondaryIndexes'],
@@ -236,5 +266,5 @@ if __name__ == '__main__':
         'create': create,
         'drop': drop,
         'setup': setup,
-        'generate_seed_data': generate_seed_data,
+        'generate_from_fixtures': generate_from_fixtures,
     })

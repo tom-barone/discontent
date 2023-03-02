@@ -1,0 +1,22 @@
+# Typing `github en.wikipedia twitter` into the main search engines consistently
+# returns the same results. Makes for good test fixtures:
+#   - en.wikipedia.org
+#   - github.com
+#   - twitter.com
+# Use a search like `reddit quora` to be guaranteed some results for
+#   - www.reddit.com
+#   - www.quora.com
+links:
+  - link: "en.wikipedia.org" # Good
+    sum_of_votes: 20
+    count_of_votes: 20
+  - link: "github.com" # Controversial
+    sum_of_votes: 10
+    count_of_votes: 52
+  - link: "twitter.com" # Bad
+    sum_of_votes: -20
+    count_of_votes: 20
+  - link: "www.reddit.com" # NoScore - with some votes
+    sum_of_votes: 2
+    count_of_votes: 2
+# - link: 'www.quora.com' # NoScore - no vote
