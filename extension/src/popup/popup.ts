@@ -3,7 +3,7 @@ import { Application } from "@hotwired/stimulus";
 import IconSettingController from "./controllers/icon_setting_controller";
 import SettingsPageController from "./controllers/settings_page_controller";
 import VotingButton from "./controllers/voting_button_controller";
-import "./menu.scss";
+import "./popup.scss";
 import "bootstrap";
 
 window.Stimulus = Application.start();

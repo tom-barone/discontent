@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Discontent</title>
+    <script src="popup.js"></script>
   </head>
   <body>
     <div class="container-fluid pb-2">
@@ -11,7 +12,7 @@
         <button
           class="btn btn-dark settings"
           type="button"
-					aria-label="Open settings"
+          aria-label="Open settings"
           data-bs-toggle="offcanvas"
           data-bs-target="#settings-page"
         >
@@ -24,18 +25,46 @@
           class="btn btn-dark invisible voting-button"
           data-controller="voting-button"
           data-voting-button-vote-value="good"
-					aria-label="Upvote button"
+          aria-label="Upvote button"
+          data-action="voting-button#submit"
         >
-          <div>.</div>
+          &nbsp;
+          <div data-voting-button-target="icon">&nbsp;</div>
+          <div
+            class="icon-setting-spinner spinner-border spinner-border-sm text-light d-none"
+            role="status"
+            data-voting-button-target="spinner"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i
+            class="icon-setting-check bi bi-check d-none"
+            data-voting-button-target="check"
+          ></i>
+          &nbsp;
         </button>
         <button
           type="button"
           class="btn btn-dark invisible voting-button"
           data-controller="voting-button"
           data-voting-button-vote-value="bad"
-					aria-label="Downvote button"
+          aria-label="Downvote button"
+          data-action="voting-button#submit"
         >
-          <div>.</div>
+          &nbsp;
+          <div data-voting-button-target="icon">&nbsp;</div>
+          <div
+            class="icon-setting-spinner spinner-border spinner-border-sm text-light d-none"
+            role="status"
+            data-voting-button-target="spinner"
+          >
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <i
+            class="icon-setting-check bi bi-check d-none"
+            data-voting-button-target="check"
+          ></i>
+          &nbsp;
         </button>
       </div>
     </div>
@@ -53,7 +82,7 @@
             class="btn btn-dark settings"
             type="button"
             data-bs-dismiss="offcanvas"
-						aria-label="Close settings"
+            aria-label="Close settings"
           >
             <i class="bi bi-arrow-right"></i>
           </button>
@@ -179,6 +208,5 @@
         </div>
       </div>
     </div>
-    <script src="menu.js"></script>
   </body>
 </html>

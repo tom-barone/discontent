@@ -5,7 +5,7 @@ module.exports = {
   entry: {
     "content_scripts/index": "./src/content_scripts/index.ts",
     "background_scripts/index": "./src/background_scripts/index.ts",
-    "menu/menu": "./src/menu/menu.ts",
+    "popup/popup": "./src/popup/popup.ts",
   },
   devtool: "inline-source-map",
   module: {
@@ -51,7 +51,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: "./src/manifest.chrome.json", to: "manifest.json" },
-        { from: "./src/menu/menu.html", to: "menu/menu.html" },
+        { from: "./src/popup/popup.html", to: "popup/popup.html" },
         { from: "./src/icons", to: "icons" },
       ],
     }),

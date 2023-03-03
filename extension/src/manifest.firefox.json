@@ -13,7 +13,7 @@
   "action": {
     "default_icon": "icons/green_heart.png",
     "default_title": "Discontent",
-    "default_popup": "menu/menu.html"
+    "default_popup": "popup/popup.html"
   },
   "content_scripts": [
     {

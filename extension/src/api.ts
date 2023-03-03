@@ -1,9 +1,9 @@
 import { Score, ScoresRequest, ScoresResponse } from "./types";
 
-const PRODUCTION_ENDPOINT =
-  "https://5h7cyehfq1.execute-api.us-east-1.amazonaws.com/v1";
-const DEVELOPMENT_ENDPOINT =
-  "http://localhost:9000/lambda-url/request-handler/v1";
+const ENDPOINT =
+  process.env.NODE_ENV === "production"
+    ? " https://5h7cyehfq1.execute-api.us-east-1.amazonaws.com/v1"
+    : "http://localhost:9000/lambda-url/request-handler/v1";
 
 export async function fetchScores(
   request: ScoresRequest
@@ -11,16 +11,11 @@ export async function fetchScores(
   const params = new URLSearchParams();
 
   params.append("from", request.json);
-  const endpoint =
-    process.env.NODE_ENV === "production"
-      ? PRODUCTION_ENDPOINT
-      : DEVELOPMENT_ENDPOINT;
-  const url = endpoint + "/scores?" + params;
+  const url = ENDPOINT + "/scores?" + params;
   const response = await fetch(url, {
     method: "GET",
   });
   const scores = await response.json();
-
   // Try parse the response into a ScoresResponse
   // TODO: Add error handling for parse failures
   const result = new Map<string, Score>();
@@ -28,4 +23,23 @@ export async function fetchScores(
     result.set(link_score.link.hostname, link_score.score);
   });
   return Object.fromEntries(result);
+}
+
+export async function submitVote(
+  vote_value: 1 | -1,
+  hostname: string,
+  user_id: string
+): Promise<boolean> {
+  const url = ENDPOINT + "/vote";
+  const response = await fetch(url, {
+    method: "POST",
+    body: JSON.stringify({
+      link: {
+        hostname,
+      },
+      vote_value,
+      user_id,
+    }),
+  });
+  return response.ok;
 }

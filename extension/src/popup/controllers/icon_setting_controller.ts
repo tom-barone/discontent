@@ -18,7 +18,6 @@ export default class extends Controller {
   declare readonly errorTarget: HTMLElement;
   declare readonly iconNameValue: IconName;
   declare timer: NodeJS.Timeout;
-  declare first_load: boolean;
 	declare readonly votingButtonOutlets: Array<VotingButtonController>;
 	declare settings: Settings;
 
