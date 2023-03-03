@@ -14,7 +14,6 @@ pub struct Link {
     #[validate(custom = "is_hostname_valid")]
     pub hostname: String,
 }
-
 impl Link {
     pub fn new(hostname: &str) -> Self {
         Link {
@@ -37,7 +36,6 @@ pub struct LinkScore {
     link: Link,
     score: Score,
 }
-
 impl LinkScore {
     pub fn new(link: Link, score: Score) -> Self {
         LinkScore { link, score }
@@ -56,7 +54,7 @@ pub mod api {
         #[validate]
         pub link: Link,
         #[validate(custom = "is_vote_value_valid")]
-        pub vote_value: i32,
+        pub value: i32,
         pub user_id: Uuid,
     }
 
@@ -73,31 +71,157 @@ pub mod api {
         #[validate(length(min = 1, max = 100))]
         scores: Vec<LinkScore>,
     }
+
+    #[derive(Debug, Serialize)]
+    pub struct Error {
+        pub error: String,
+        pub description: serde_json::Value,
+    }
 }
 
 pub mod database {
-    use std::collections::HashMap;
-
+    use super::Link;
+    use crate::validate::*;
     use aws_sdk_dynamodb::model::AttributeValue;
     use lambda_http::Error;
-    use serde::{Deserialize, Serialize};
+    use serde::Deserialize;
+    use std::collections::HashMap;
+    use uuid::Uuid;
     use validator::Validate;
+    // TODO: Add validation to these database types
 
-    use super::Link; // We still want to make sure the stuff in the database is valid
+    #[derive(Debug, Validate, Deserialize, PartialEq)]
+    pub struct Vote {
+        #[validate]
+        pub link: Link,
+        #[validate(custom = "is_vote_value_valid")]
+        pub value: i32,
+        pub user_id: Uuid,
+        #[validate(custom = "is_timestamp_valid")]
+        pub created_at: String
+    }
+    impl TryFrom<&HashMap<String, AttributeValue>> for Vote {
+        type Error = Error;
+        fn try_from(hash_map: &HashMap<String, AttributeValue>) -> Result<Self, Error> {
+            let primary_key = hash_map
+                .get("PK")
+                .ok_or("No PK")?
+                .as_s()
+                .or(Err("PK is not a string"))?;
+            let link = Link::new(primary_key.split('#').nth(1).ok_or("No link")?);
+            let value = hash_map
+                .get("value")
+                .ok_or("No value")?
+                .as_n()
+                .or(Err("value is not a number"))?
+                .parse::<i32>()?;
+            let sort_key = hash_map
+                .get("SK")
+                .ok_or("No SK")?
+                .as_s()
+                .or(Err("SK is not a string"))?;
+            let user_id = Uuid::parse_str(sort_key.split('#').nth(1).ok_or("No user_id")?)?;
+            let created_at = hash_map
+                .get("created_at")
+                .ok_or("No created_at")?
+                .as_s()
+                .or(Err("created_at is not a string"))?
+                .to_string();
+            let vote = Vote {
+                link,
+                value,
+                user_id,
+                created_at,
+            };
+            vote.validate()?;
+            Ok(vote)
+        }
+    }
 
-    #[derive(Debug, Serialize, Deserialize)]
-    pub enum EntityType {
-        LinkDetail,
-        Vote,
-        User,
-        LinkHistory,
-        UserHistory,
-        Settings,
+    #[derive(Debug)]
+    pub struct UserHistory {
+        pub day: String,
+        pub count_of_votes: u32,
+        pub sum_of_votes: i32,
+    }
+    impl TryFrom<&HashMap<String, AttributeValue>> for UserHistory {
+        type Error = Error;
+        fn try_from(hash_map: &HashMap<String, AttributeValue>) -> Result<Self, Error> {
+            let primary_key = hash_map
+                .get("PK")
+                .ok_or("No PK")?
+                .as_s()
+                .or(Err("PK is not a string"))?;
+            let day = primary_key
+                .split('#')
+                .nth(1)
+                .ok_or("No day found in PK")?
+                .to_string();
+            let count_of_votes = hash_map
+                .get("count_of_votes")
+                .ok_or("No count_of_votes")?
+                .as_n()
+                .or(Err("count_of_votes is not a number"))?
+                .parse::<u32>()?;
+            let sum_of_votes = hash_map
+                .get("sum_of_votes")
+                .ok_or("No sum_of_votes")?
+                .as_n()
+                .or(Err("sum_of_votes is not a number"))?
+                .parse::<i32>()?;
+
+            Ok(UserHistory {
+                day,
+                count_of_votes,
+                sum_of_votes,
+            })
+        }
+    }
+
+    #[derive(Debug)]
+    pub struct User {
+        pub is_banned: bool,
+    }
+    impl TryFrom<&HashMap<String, AttributeValue>> for User {
+        type Error = Error;
+        fn try_from(hash_map: &HashMap<String, AttributeValue>) -> Result<Self, Error> {
+            let is_banned = hash_map
+                .get("is_banned")
+                .ok_or("No is_banned")?
+                .as_bool()
+                .or(Err("is_banned is not a bool"))?
+                .clone();
+
+            Ok(User { is_banned })
+        }
     }
 
     #[derive(Debug)]
     pub struct Settings {
         pub voting_is_disabled: bool,
+        pub maximum_votes_per_user_per_day: u32,
+    }
+    impl TryFrom<&HashMap<String, AttributeValue>> for Settings {
+        type Error = Error;
+        fn try_from(hash_map: &HashMap<String, AttributeValue>) -> Result<Self, Error> {
+            let voting_is_disabled = hash_map
+                .get("voting_is_disabled")
+                .ok_or("No voting_is_disabled")?
+                .as_bool()
+                .or(Err("voting_is_disabled is not a bool"))?
+                .clone();
+            let maximum_votes_per_user_per_day = hash_map
+                .get("maximum_votes_per_user_per_day")
+                .ok_or("No maximum_votes_per_user_per_day")?
+                .as_n()
+                .or(Err("maximum_votes_per_user_per_day is not a number"))?
+                .parse::<u32>()?;
+
+            Ok(Settings {
+                voting_is_disabled,
+                maximum_votes_per_user_per_day,
+            })
+        }
     }
 
     #[derive(Debug, Validate, PartialEq)]
@@ -137,130 +261,3 @@ pub mod database {
         }
     }
 }
-
-//#[cfg(test)]
-//mod tests {
-
-//use super::*;
-
-//#[test]
-//fn test_deserialize_vote() {
-//// Bad json types
-//for incorrect_json_type in &[
-//r#"{"link": 1234,      "vote_value": 1,   "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}"#,
-//r#"{"link": "abc.com", "vote_value": "1", "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}"#,
-//r#"{"link": "abc.com", "vote_value": 1,   "user_id": "s.d..."}"#,
-//] {
-//assert!(serde_json::from_str::<Vote>(incorrect_json_type)
-//.unwrap_err()
-//.is_data());
-//}
-
-//// Invalid vote values
-//serde_json::from_str::<Vote>(
-//r#"{"link": "ab!%^om", "vote_value": 1,   "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}"#)
-//.unwrap().validate().unwrap_err().field_errors().iter().for_each(|(field, error)| {
-//assert_eq!(field, &"link");
-//assert_eq!(error[0].code.to_string(), "Hostname is invalid")
-//});
-//serde_json::from_str::<Vote>(
-//r#"{"link": "abc.com", "vote_value": 0,   "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}"#)
-//.unwrap().validate().unwrap_err().field_errors().iter().for_each(|(field, error)| {
-//assert_eq!(field, &"vote_value");
-//assert_eq!(error[0].code.to_string(), "Vote should be -1 or 1")
-//});
-
-//// Correct json values
-//let correct_votes = vec![
-//Vote {
-//link: Link::new("abc.com"),
-//vote_value: -1,
-//user_id: uuid::uuid!("a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"),
-//},
-//Vote {
-//link: Link::new("www.domain.com"),
-//vote_value: 1,
-//user_id: uuid::uuid!("a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"),
-//},
-//];
-//for (i, correct_json_vote) in [
-//r#"{"link": "abc.com",        "vote_value": -1,  "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}"#,
-//r#"{"link": "www.domain.com", "vote_value": 1,   "user_id": "a4a709001c864dd78d380dc05bfb1e0a"}"#,
-//].iter().enumerate() {
-//let parsed_vote = serde_json::from_str::<Vote>(correct_json_vote).unwrap();
-//assert!(parsed_vote.validate().is_ok());
-//assert_eq!(parsed_vote, correct_votes[i])
-//}
-//}
-
-//#[test]
-//fn test_deserialize_admin_vote() {
-//// Bad json types
-//for incorrect_json_type in &[r#"{"timestamp": 2023,
-//"vote" : {"link": "abc.com", "vote_value": 1, "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}}"#]
-//{
-//assert!(serde_json::from_str::<AdminVote>(incorrect_json_type)
-//.unwrap_err()
-//.is_data());
-//}
-
-//// Invalid admin vote values
-//for invalid_timestamp in [
-//"2023-02-0209:36:03Z",
-//"a2023-02-02T09:36:03Z",
-//"2023-09-02T99:36:03Z",
-//] {
-//serde_json::from_str::<AdminVote>(
-//format!("{}{}{}", r#"{"timestamp": ""#, invalid_timestamp, r#"",
-//"vote" : {"link": "abc.com", "vote_value": 1, "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}}"#).as_str())
-//.unwrap()
-//.validate()
-//.unwrap_err()
-//.field_errors()
-//.iter()
-//.for_each(|(field, error)| {
-//assert_eq!(field, &"timestamp");
-//assert_eq!(error[0].code.to_string(), "Timestamp should be in the RFC3339 format 2023-02-02T09:36:03Z")
-//});
-//}
-//serde_json::from_str::<AdminVote>(
-//r#"{"timestamp": "2023-02-02T09:36:03Z",
-//"vote" : {"link": "abc.com", "vote_value": 0, "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}}"#
-
-//)
-//.unwrap().validate().unwrap_err().field_errors().iter().for_each(|(field, error)| {
-//assert_eq!(field, &"vote_value");
-//assert_eq!(error[0].code.to_string(), "Vote should be -1 or 1")
-//});
-
-//// Correct json values
-//let correct_admin_votes = vec![
-//AdminVote {
-//timestamp: "2023-02-02T09:36:03Z".to_string(),
-//vote: Vote {
-//link: Link::new("abc.com"),
-//vote_value: -1,
-//user_id: uuid::uuid!("a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"),
-//},
-//},
-//AdminVote {
-//timestamp: "2019-02-01T23:59:59Z".to_string(),
-//vote: Vote {
-//link: Link::new("www.t.au"),
-//vote_value: 1,
-//user_id: uuid::uuid!("58382932-1c86-4dd7-8d38-0dc05bfb1e0a"),
-//},
-//},
-//];
-//for (i, correct_json_admin_votes) in [
-//r#"{"timestamp": "2023-02-02T09:36:03Z",
-//"vote" : {"link": "abc.com", "vote_value": -1, "user_id": "a4a70900-1c86-4dd7-8d38-0dc05bfb1e0a"}}"#,
-//r#"{"timestamp": "2019-02-01T23:59:59Z",
-//"vote" : {"link": "www.t.au", "vote_value": 1, "user_id": "58382932-1c86-4dd7-8d38-0dc05bfb1e0a"}}"#]
-//.iter().enumerate() {
-//let parsed_vote = serde_json::from_str::<AdminVote>(correct_json_admin_votes).unwrap();
-//assert!(parsed_vote.validate().is_ok());
-//assert_eq!(parsed_vote, correct_admin_votes[i])
-//}
-//}
-//}

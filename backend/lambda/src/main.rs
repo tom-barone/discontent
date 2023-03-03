@@ -2,6 +2,7 @@ mod routes;
 mod scoring;
 mod types;
 mod validate;
+mod dynamodb;
 
 use aws_sdk_dynamodb::Client;
 use lambda_http::{
@@ -17,7 +18,7 @@ use types::Config;
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let (config, dynamo_db_client) = setup().await;
-    info!("Loaded config [{:#?}]", config);
+    info!("Loaded config [{:?}]", config);
 
     run(service_fn(|request: Request| async {
         root_handler(request, &config, &dynamo_db_client).await
@@ -80,7 +81,7 @@ async fn root_handler(
         // all into a 500 response
         Err(e) => {
             warn!("Could not complete request [error={:#?}]", e);
-            server_error(e)
+            handle_error(e)
         }
     }
 }
@@ -103,10 +104,19 @@ fn success(body: Body) -> Result<Response<Body>, Error> {
         .unwrap())
 }
 
-fn server_error(error: Error) -> Result<Response<Body>, Error> {
+fn handle_error(error: Error) -> Result<Response<Body>, Error> {
+    let error_body = format!(
+        r#"{{"error": {}}}"#,
+        serde_json::to_string(&error.to_string())
+            .unwrap_or("Something bad and unknown".to_string())
+    );
+    server_error(Body::from(error_body))
+}
+
+fn server_error(body: Body) -> Result<Response<Body>, Error> {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
-        .header("content-type", "text/plain")
-        .body(format!("{:?}", error).into())
+        .header("content-type", "application/json")
+        .body(body)
         .unwrap())
 }

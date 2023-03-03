@@ -12,12 +12,10 @@ erDiagram
 
 ### Link
 
-A `String` of the hostname that represents the website, for example `"www.google.com" or "blog.myspecialplace.com"`.
-
-[See here](https://developer.mozilla.org/en-US/docs/Web/API/Location/hostname) for a good explanation of the different pieces in the URL:
+The hostname `String` that represents the website, for example `"www.google.com" or "blog.myspecialplace.com"`. [See here](https://developer.mozilla.org/en-US/docs/Web/API/Location/hostname) for a good explanation of the different pieces in the URL:
 <br/><img height=70 src="../docs/assets/URL_description.png" alt="Structure and components of a URL"></img>
 
-_Right now all voting just happens on the hostname, but there could be a future where Discontent allows voting on full URL paths. This would mean being able to vote on individual Medium articles for example._
+_Right now all voting just happens on the hostname, but there could be a future where voting happens on full URL paths. Like voting on individual Medium articles for example._
 
 ### Vote
 
@@ -25,7 +23,7 @@ An `Integer` that's either a +1 or -1, stored with a `Timestamp` when the vote w
 
 ### Timestamp
 
-Represented everywhere as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) string with the specific format `2023-02-02T09:36:03Z`.
+Represented everywhere as an [RFC 3339](https://www.rfc-editor.org/rfc/rfc3339) string with the specific format `2023-02-02T09:36:03Z`.
 
 ### Score
 
@@ -64,10 +62,7 @@ _TODO: Link to a swagger page._
 | Request                                            | Response                       | Visibility                            |
 | -------------------------------------------------- | ------------------------------ | ------------------------------------- |
 | `GET /scores?for=[link1, link2, ...]`              | `[{link: Link, score: Score}]` | Public                                |
-| `GET /vote?link=link`                              | `Vote`                         | Public                                |
-| `POST /vote {link, vote, userId}`                  |                                | Public                                |
-| `POST /admin/vote {link, vote, userId, timestamp}` |                                | Admin only, used for database seeding |
-| `POST /admin/settings { voting_is_disabled }`      |                                | Admin only                            |
+| `POST /vote {link, vote, user_id}`                  |                                | Public                                |
 
 ## Database
 
@@ -83,17 +78,17 @@ The access patterns are reasonably well defined:
 | ----------------------------- | -------------------------------------------------- | --------------------------------------------------------- |
 | Get vote summaries for a Link | Summaries are `sum_of_votes` & `count_of_votes`    | `Table:Discontent - PK=link#<link>, SK=link#<link>`       |
 | Get all votes for a Link      | To calculate `sum_of_votes` & `count_of_votes`     | `Table:Discontent - PK=link#<link>, SK.startswith(user#)` |
-| Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
-| Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<userId>`     |
-| Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<userId>`      |
-| Get banned state for a User   | Prevent banned users from submitting more votes    | `Table:Discontent - PK=user#<userId>, SK=user#<userId>`   |
+| Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`     |
+| Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`     |
+| Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<user_id>`      |
+| Get banned state for a User   | Prevent banned users from submitting more votes    | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>`   |
 
 The following are analysis access patterns, not really part of regular usage.
 
 | Analysis Access Patterns              | Description                                 | Table & Filter                                             |
 | ------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
-| Get User details                      | To carry out abuse investigations           | `Table:Discontent - PK=user#<userId>, SK=user#<userId>,`   |
-| Get all votes for a user              | To carry out abuse investigations           | `GSI:UserVotes - PK=user#<userId>, SK.within(timerange)`   |
+| Get User details                      | To carry out abuse investigations           | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>,`   |
+| Get all votes for a user              | To carry out abuse investigations           | `GSI:UserVotes - PK=user#<user_id>, SK.within(timerange)`   |
 | Get top users by daily count of votes | To identify possible abuse                  | `GSI:DailyUserHistory - PK=<day>, SK.top(N)`               |
 | Get top links by daily count of votes | To identify possible abuse                  | `GSI:DailyLinkHistoryByCountOfVotes - PK=<day>, SK.top(N)` |
 | Get top links by daily sum of votes   | To create a best links leaderboard          | `GSI:DailyLinkHistoryBySumOfVotes - PK=<day>, SK.top(N)`   |
@@ -139,7 +134,7 @@ sequenceDiagram
     actor Extension
     participant API
     participant Database
-    Extension->>API: POST /vote {link:<Link>, vote:<Vote>}
+    Extension->>API: POST /vote {link, vote, user_id}`
 		activate API
 		API->>API: Validate parameters
     alt Invalid parameters
@@ -147,8 +142,9 @@ sequenceDiagram
     end
 		API->>Database: Check user history & settings. GetBatchItems(___________)
 		Note over API,Database: Voting disabled? GetItem(PK=settings, SK=settings)
-		Note over API,Database: Too many votes? GetItem(PK=date, SK=userId)
-		Note over API,Database: Banned? GetItem(PK=userId, SK=userId)
+		Note over API,Database: Too many votes? GetItem(PK=date, SK=user_id)
+		Note over API,Database: User exists? User banned? GetItem(PK=user_id, SK=user_id)
+		Note over API,Database: Already voted? GetItem(PK=link, SK=user_id)
 		activate Database
     alt Database Error
         Database->>API: Database Error (connection / server...)
@@ -156,17 +152,31 @@ sequenceDiagram
     end
 		Database->>API: Return UserHistory & Settings
 		deactivate Database
-		API->>API: Check UserHistory & Settings
+		API->>API: Check user history & Settings
     alt Failed
-        API->>Extension: Error: Too many votes / banned / voting disabled
+        API->>Extension: 403 Forbidden: Too many votes / banned / voting disabled
     end
 		activate Database
 		API->>Database: Submit vote. BatchWriteItems(_________________)
-		Note over API,Database: UpdateItem(PK=link, SK=userId | vote)
-		Note over API,Database: UpdateItem(PK=link, SK=link | count_of_votes++, sum_of_votes+=vote)
-		Note over API,Database: UpdateItem(PK=day, SK=link | count_of_votes++, sum_of_votes+=vote)
-		Note over API,Database: UpdateItem(PK=day, SK=user | count_of_votes++, sum_of_votes+=vote)
-		Note over API,Database: UpdateItem(PK=user, SK=user | user_notes)
+    alt If user does not exist
+		Note over API,Database: Put(PK=user_id, SK=user_id | not_banned,created_at)
+		Note over API,Database: <run [First time user voting on link]>
+		else First time user voting on link
+		Note over API,Database: Put(PK=link, SK=user_id | vote)
+		Note over API,Database: Update(PK=link, SK=link | count_of_votes++, sum_of_votes+=vote)
+		Note over API,Database: -- Add history
+		Note over API,Database: Update(PK=day, SK=link | count++, sum+=vote)
+		Note over API,Database: Update(PK=day, SK=user | count++, sum+=vote)
+    else If user already voted on link
+		Note over API,Database: Put(PK=link, SK=user_id | vote)
+		Note over API,Database: Update(PK=link, SK=link | sum_of_votes+=(-old_vote+new_vote))
+		Note over API,Database: -- Undo old history
+		Note over API,Database: Update(PK=old_day, SK=link | count--, sum-=old_vote)
+		Note over API,Database: Update(PK=old_day, SK=user | count--, sum-=old_vote)
+		Note over API,Database: -- Add history
+		Note over API,Database: Update(PK=day, SK=link | count++, sum+=vote)
+		Note over API,Database: Update(PK=day, SK=user | count++, sum+=vote)
+		end
 		activate Database
     alt Database Error
         Database->>API: Database Error (connection / server...)

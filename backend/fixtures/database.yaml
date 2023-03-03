@@ -20,3 +20,8 @@ links:
     sum_of_votes: 2
     count_of_votes: 2
 # - link: 'www.quora.com' # NoScore - no vote
+
+settings:
+  voting_is_disabled: false
+  maximum_votes_per_user_per_day: 10
+  

@@ -4,7 +4,7 @@ install:
 	poetry install
 
 dev: stop-local-database stop-lambda
-	$(MAKE) --jobs=3 start-lambda start-local-database load-database-fixtures
+	$(MAKE) --jobs=2 start-lambda start-local-database
 
 test:
 	poetry run python -m unittest discover
@@ -31,7 +31,7 @@ seed: install seed/hacker_news_submissions seed/seed.csv
 
 # Secondary targets
 
-load-database-fixtures: install
+setup-database: install
 	poetry run python database.py setup
 	@echo "\nREADY"
 
@@ -43,6 +43,7 @@ stop-lambda:
 
 start-local-database: 
 	@echo "Start the local database"
+	sleep 3 && poetry run python database.py setup &
 	docker-compose up
 
 stop-local-database:

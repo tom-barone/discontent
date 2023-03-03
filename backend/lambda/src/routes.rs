@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use crate::{
+    dynamodb::*,
     scoring::*,
-    types::{api::VoteRequest, database::LinkDetail, Config},
+    types::{database::*, Config},
     validate::{validate_get_scores_request, validate_vote_request},
 };
 use aws_sdk_dynamodb::{
-    model::{AttributeValue::*, KeysAndAttributes, Put, TransactWriteItem, Update},
+    model::{AttributeValue::*, KeysAndAttributes, TransactWriteItem},
     Client,
 };
 use chrono::{SecondsFormat, Utc};
@@ -21,136 +22,133 @@ pub async fn vote(
     dynamo_db_client: &Client,
 ) -> Result<Body, Error> {
     let vote_request = validate_vote_request(request.body())?;
-    info!("Vote request: {:?}", vote_request);
-    let VoteRequest {
-        link,
-        user_id,
-        vote_value,
-    } = vote_request;
-
-    // Get timestamp in "2018-01-26T18:30:09.453Z" format
-    let timestamp = Utc::now().to_rfc3339_opts(SecondsFormat::Millis, true);
+    let vote = Vote {
+        link: vote_request.link.clone(),
+        user_id: vote_request.user_id.clone(),
+        value: vote_request.value,
+        // Get created_at timestamp in "2018-01-26T18:30:09Z" format
+        created_at: Utc::now().to_rfc3339_opts(SecondsFormat::Secs, true),
+    };
     // Extract day string `2023-02-09`
-    let day = &timestamp[..10];
+    let day = vote.created_at.clone()[..10].to_string();
 
-    let write_result = dynamo_db_client
-        .transact_write_items()
-        .transact_items(
-            TransactWriteItem::builder()
-                .put(
-                    //UpdateItem(PK=link, SK=userId | vote)
-                    Put::builder()
-                        // Fail if user has already voted
-                        .condition_expression(
-                            "attribute_not_exists(PK) and attribute_not_exists(SK)",
-                        )
-                        .item("PK", S(format!("link#{}", link.hostname)))
-                        .item("SK", S(format!("user#{}", user_id.hyphenated())))
-                        .item("entity_type", S("Vote".to_string()))
-                        .item("vote_value", N(vote_value.to_string()))
-                        .item("vote_timestamp", S(timestamp.to_string()))
-                        .item("UserVotes_PK", S(user_id.hyphenated().to_string()))
-                        .table_name(&config.table_name)
-                        .build(),
-                )
-                .build(),
-        )
-        .transact_items(
-            TransactWriteItem::builder()
-                .put(
-                    //UpdateItem(PK=user, SK=user)
-                    Put::builder()
-                        .item("PK", S(format!("user#{}", user_id.hyphenated())))
-                        .item("SK", S(format!("user#{}", user_id.hyphenated())))
-                        .item("entity_type", S("User".to_string()))
-                        .table_name(&config.table_name)
-                        .build(),
-                )
-                .build(),
-        )
-        .transact_items(
-            TransactWriteItem::builder()
-                .update(
-                    //UpdateItem(PK=link, SK=link | count_of_votes++, sum_of_votes+=vote)
-                    Update::builder()
-                        .key("PK", S(format!("link#{}", link.hostname)))
-                        .key("SK", S(format!("link#{}", link.hostname)))
-                        .update_expression(format!(
-                            "SET {},{},{}",
-                            "count_of_votes = if_not_exists(count_of_votes, :zero) + :one",
-                            "sum_of_votes = if_not_exists(sum_of_votes, :zero) + :vote_value",
-                            "entity_type = :entity_type",
-                        ))
-                        .expression_attribute_values(":vote_value", N(vote_value.to_string()))
-                        .expression_attribute_values(":zero", N(0.to_string()))
-                        .expression_attribute_values(":one", N(1.to_string()))
-                        .expression_attribute_values(":entity_type", S("Link".to_string()))
-                        .table_name(&config.table_name)
-                        .build(),
-                )
-                .build(),
-        )
-        .transact_items(
-            TransactWriteItem::builder()
-                .update(
-                    //UpdateItem(PK=day, SK=link | count_of_votes++, sum_of_votes+=vote)
-                    Update::builder()
-                        .key("PK", S(format!("day#{}", day)))
-                        .key("SK", S(format!("link#{}", link.hostname)))
-                        .update_expression(format!(
-                            "SET {},{},{},{}",
-                            "count_of_votes = if_not_exists(count_of_votes, :zero) + :one",
-                            "sum_of_votes = if_not_exists(sum_of_votes, :zero) + :vote_value",
-                            "entity_type = :entity_type",
-                            "DailyLinkHistory_PK = :DailyLinkHistory_PK",
-                        ))
-                        .expression_attribute_values(":vote_value", N(vote_value.to_string()))
-                        .expression_attribute_values(":zero", N(0.to_string()))
-                        .expression_attribute_values(":one", N(1.to_string()))
-                        .expression_attribute_values(":entity_type", S("LinkHistory".to_string()))
-                        .expression_attribute_values(
-                            ":DailyLinkHistory_PK",
-                            S(format!("day#{}", day)),
-                        )
-                        .table_name(&config.table_name)
-                        .build(),
-                )
-                .build(),
-        )
-        .transact_items(
-            TransactWriteItem::builder()
-                .update(
-                    //UpdateItem(PK=day, SK=user | count_of_votes++, sum_of_votes+=vote)
-                    Update::builder()
-                        .key("PK", S(format!("day#{}", day)))
-                        .key("SK", S(format!("user#{}", user_id.hyphenated())))
-                        .update_expression(format!(
-                            "SET {},{},{},{}",
-                            "count_of_votes = if_not_exists(count_of_votes, :zero) + :one",
-                            "sum_of_votes = if_not_exists(sum_of_votes, :zero) + :vote_value",
-                            "entity_type = :entity_type",
-                            "DailyUserHistory_PK = :DailyUserHistory_PK",
-                        ))
-                        .expression_attribute_values(":vote_value", N(vote_value.to_string()))
-                        .expression_attribute_values(":zero", N(0.to_string()))
-                        .expression_attribute_values(":one", N(1.to_string()))
-                        .expression_attribute_values(":entity_type", S("UserHistory".to_string()))
-                        .expression_attribute_values(
-                            ":DailyUserHistory_PK",
-                            S(format!("day#{}", day)),
-                        )
-                        .table_name(&config.table_name)
-                        .build(),
-                )
+    info!("New vote request: {:?}", vote);
+
+    // Get settings and user history
+    let settings_and_user_request = dynamo_db_client
+        .batch_get_item()
+        .request_items(
+            &config.table_name,
+            KeysAndAttributes::builder()
+                .set_keys(Some(vec![
+                    get_settings(),
+                    get_user(&vote.user_id),
+                    get_daily_user_history(&day, &vote.user_id),
+                    get_vote(&vote),
+                ]))
                 .build(),
         )
         .send()
         .await?;
-
     debug!(
-        "Successfully submitted vote [result={:?}]",
-        write_result
+        "Settings and User History response: {:#?}",
+        settings_and_user_request
     );
+
+    let mut user_does_not_exist = true;
+    let mut user_is_banned = false;
+    let mut first_vote_on_link_for_user = true;
+    let mut voting_is_disabled = false;
+    let mut user_has_voted_too_many_times_today = false;
+    let mut maximum_votes_per_user_per_day: u32 = 10;
+    let mut old_vote: Option<Vote> = None;
+    for item in settings_and_user_request
+        .responses()
+        .ok_or("DynamoDB request error")?
+        .get(&config.table_name)
+        .ok_or("DynamoDB request error")?
+        .iter()
+    {
+        let entity_type = item
+            .get("entity_type")
+            .ok_or("No entity_type")?
+            .as_s()
+            .or(Err("entity_type is not a string"))?;
+        match entity_type.as_str() {
+            "Settings" => {
+                let settings = Settings::try_from(item)?;
+                voting_is_disabled = settings.voting_is_disabled;
+                maximum_votes_per_user_per_day = settings.maximum_votes_per_user_per_day;
+            }
+            "User" => {
+                user_does_not_exist = false;
+                let user = User::try_from(item)?;
+                user_is_banned = user.is_banned;
+            }
+            "UserHistory" => {
+                let daily_user_history = UserHistory::try_from(item)?;
+                // Assumes the settings have already been retrieved
+                user_has_voted_too_many_times_today =
+                    daily_user_history.count_of_votes >= maximum_votes_per_user_per_day;
+            }
+            "Vote" => {
+                first_vote_on_link_for_user = false;
+                old_vote = Some(Vote::try_from(item)?);
+            }
+            _ => {
+                return Err("Unknown entity_type".into());
+            }
+        }
+    }
+
+    if user_is_banned {
+        return Err("User is banned".into());
+    }
+    if voting_is_disabled {
+        return Err("Voting is disabled".into());
+    }
+    if user_has_voted_too_many_times_today {
+        return Err("User has voted too many times today".into());
+    }
+
+    let mut write_requests: Vec<TransactWriteItem> = vec![];
+    if user_does_not_exist {
+        write_requests.push(put_new_user(&vote.user_id, &vote.created_at, config));
+    }
+    if first_vote_on_link_for_user {
+        write_requests.push(put_vote(&vote, config));
+        write_requests.push(update_link_detail(&vote.link, vote.value, config));
+        write_requests.push(increment_link_history(&day, &vote, config));
+        write_requests.push(increment_user_history(&day, &vote, config));
+    } else if let Some(old_vote) = old_vote {
+        let old_day = old_vote.created_at[..10].to_string();
+        write_requests.push(put_vote(&vote, config));
+        write_requests.push(update_existing_link_detail(
+            &vote.link,
+            -old_vote.value + vote.value, // The change in vote value
+            config,
+        ));
+        // If updates are on the same day
+        if old_day == day {
+            // Update old day
+            write_requests.push(update_link_history(&day, &old_vote, &vote, config));
+            write_requests.push(update_user_history(&day, &old_vote, &vote, config));
+        } else {
+            // Revert old day, increment new day
+            write_requests.push(revert_link_history(&old_vote, &vote.link, config));
+            write_requests.push(revert_user_history(&old_vote, &vote.user_id, config));
+            write_requests.push(increment_link_history(&day, &vote, config));
+            write_requests.push(increment_user_history(&day, &vote, config));
+        }
+    }
+
+    let write_result = dynamo_db_client
+        .transact_write_items()
+        .set_transact_items(Some(write_requests))
+        .send()
+        .await?;
+        
+    debug!("Successfully submitted vote [result={:?}]", write_result);
 
     return Ok(Body::Empty);
 }
@@ -199,7 +197,6 @@ pub async fn scores(
         let link_detail = LinkDetail::try_from(item)?;
         link_detail.validate()?;
         link_details.insert(link_detail.link.clone(), link_detail);
-        //link_details.push(link_detail);
     }
 
     // Calculate the scores

@@ -19,7 +19,7 @@ Resources:
           AttributeType: S
         - AttributeName: UserVotes_PK
           AttributeType: S
-        - AttributeName: vote_timestamp
+        - AttributeName: created_at
           AttributeType: S
         - AttributeName: DailyUserHistory_PK
           AttributeType: S
@@ -34,13 +34,13 @@ Resources:
           KeySchema:
             - AttributeName: UserVotes_PK
               KeyType: HASH
-            - AttributeName: vote_timestamp
+            - AttributeName: created_at
               KeyType: RANGE
           Projection:
             ProjectionType: INCLUDE
             NonKeyAttributes:
               - entity_type
-              - vote_value
+              - value
               - PK
         - IndexName: DailyUserHistory
           KeySchema:

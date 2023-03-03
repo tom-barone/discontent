@@ -3,7 +3,7 @@
   "ModelMetadata": {
     "Author": "Tom Barone",
     "DateCreated": "Feb 01, 2023, 10:42 AM",
-    "DateLastModified": "Feb 16, 2023, 12:36 PM",
+    "DateLastModified": "Mar 03, 2023, 05:36 PM",
     "Description": "Database model for Discontent",
     "AWSService": "Amazon DynamoDB",
     "Version": "3.0"
@@ -35,19 +35,15 @@
           "AttributeType": "N"
         },
         {
-          "AttributeName": "vote_value",
+          "AttributeName": "value",
           "AttributeType": "N"
         },
         {
-          "AttributeName": "vote_timestamp",
+          "AttributeName": "created_at",
           "AttributeType": "S"
         },
         {
-          "AttributeName": "user_notes",
-          "AttributeType": "S"
-        },
-        {
-          "AttributeName": "user_is_banned",
+          "AttributeName": "is_banned",
           "AttributeType": "BOOL"
         },
         {
@@ -65,6 +61,10 @@
         {
           "AttributeName": "voting_is_disabled",
           "AttributeType": "BOOL"
+        },
+        {
+          "AttributeName": "maximum_votes_per_user_per_day",
+          "AttributeType": "N"
         }
       ],
       "GlobalSecondaryIndexes": [
@@ -76,7 +76,7 @@
               "AttributeType": "S"
             },
             "SortKey": {
-              "AttributeName": "vote_timestamp",
+              "AttributeName": "created_at",
               "AttributeType": "S"
             }
           },
@@ -84,7 +84,7 @@
             "ProjectionType": "INCLUDE",
             "NonKeyAttributes": [
               "entity_type",
-              "vote_value",
+              "value",
               "PK"
             ]
           }
@@ -181,10 +181,10 @@
           "entity_type": {
             "S": "Vote"
           },
-          "vote_value": {
+          "value": {
             "N": "1"
           },
-          "vote_timestamp": {
+          "created_at": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -201,10 +201,10 @@
           "entity_type": {
             "S": "Vote"
           },
-          "vote_value": {
+          "value": {
             "N": "1"
           },
-          "vote_timestamp": {
+          "created_at": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -238,10 +238,10 @@
           "entity_type": {
             "S": "Vote"
           },
-          "vote_value": {
+          "value": {
             "N": "1"
           },
-          "vote_timestamp": {
+          "created_at": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -258,10 +258,10 @@
           "entity_type": {
             "S": "Vote"
           },
-          "vote_value": {
+          "value": {
             "N": "-1"
           },
-          "vote_timestamp": {
+          "created_at": {
             "S": "2023-01-10T20:18:29Z"
           },
           "UserVotes_PK": {
@@ -278,7 +278,10 @@
           "entity_type": {
             "S": "User"
           },
-          "user_is_banned": {
+          "created_at": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "is_banned": {
             "BOOL": true
           }
         },
@@ -292,8 +295,11 @@
           "entity_type": {
             "S": "User"
           },
-          "user_notes": {
-            "S": "Initial HackerNews seed"
+          "created_at": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "is_banned": {
+            "BOOL": false
           }
         },
         {
@@ -305,6 +311,12 @@
           },
           "entity_type": {
             "S": "User"
+          },
+          "created_at": {
+            "S": "2023-01-10T20:18:29Z"
+          },
+          "is_banned": {
+            "BOOL": false
           }
         },
         {
@@ -419,6 +431,9 @@
           },
           "voting_is_disabled": {
             "BOOL": false
+          },
+          "maximum_votes_per_user_per_day": {
+            "N": "10"
           }
         }
       ],

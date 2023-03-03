@@ -37,7 +37,34 @@ def drop():
         dynamodb.get_waiter('table_not_exists').wait(TableName=table)
 
 
-def generate_from_fixtures():
+def load_settings():
+    fixtures = yaml.safe_load(open('fixtures/database.yaml'))
+    # Settings
+    config = _load_config()
+    dynamodb.put_item(
+        TableName=config['TableName'],
+        Item={
+            'PK': {
+                'S': 'settings'
+            },
+            'SK': {
+                'S': 'settings'
+            },
+            'entity_type': {
+                'S': 'Settings'
+            },
+            'voting_is_disabled': {
+                'BOOL': fixtures['settings']['voting_is_disabled']
+            },
+            'maximum_votes_per_user_per_day': {
+                'N':
+                str(fixtures['settings']['maximum_votes_per_user_per_day'])
+            },
+        })
+    print('Loaded default settings')
+
+
+def load_test_data():
     fixtures = yaml.safe_load(open('fixtures/database.yaml'))
     for link_detail in tqdm(fixtures['links']):
         count_of_votes = link_detail['count_of_votes']
@@ -58,7 +85,7 @@ def generate_from_fixtures():
                 "link": {
                     "hostname": link
                 },
-                "vote_value": vote_value,
+                "value": vote_value,
                 # Generate a UUID, <3 bel
                 "user_id": f"BEDA{i:04}-4822-4342-0990-b92d94d9489a",
             }
@@ -197,7 +224,7 @@ def generate_seed_data(input_files, output):
 def setup():
     drop()
     create()
-    generate_from_fixtures()
+    load_settings()
     # print(table['TableNames'])
     # print(dynamodb.delete_table(TableName=table))
 
@@ -266,5 +293,5 @@ if __name__ == '__main__':
         'create': create,
         'drop': drop,
         'setup': setup,
-        'generate_from_fixtures': generate_from_fixtures,
+        'load_test_data': load_test_data,
     })
