@@ -6,7 +6,7 @@
 # Use a search like `reddit quora` to be guaranteed some results for
 #   - www.reddit.com
 #   - www.quora.com
-links:
+development_links:
   - link: "en.wikipedia.org" # Good
     sum_of_votes: 20
     count_of_votes: 20
@@ -19,9 +19,7 @@ links:
   - link: "www.reddit.com" # NoScore - with some votes
     sum_of_votes: 2
     count_of_votes: 2
-# - link: 'www.quora.com' # NoScore - no vote
 
 settings:
   voting_is_disabled: false
   maximum_votes_per_user_per_day: 10
-  

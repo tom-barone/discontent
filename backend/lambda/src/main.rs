@@ -49,11 +49,18 @@ async fn setup() -> (Config, Client) {
         .parse::<bool>()
         .expect("ERROR: Env variable RANDOMIZE_SCORES should be a boolean");
 
+    let use_system_time = env::var("USE_SYSTEM_TIME")
+        .expect("ERROR: Env variable USE_SYSTEM_TIME should be set")
+        .parse::<bool>()
+        .expect("ERROR: Env variable USE_SYSTEM_TIME should be a boolean");
+
     return (
         Config {
             table_name,
+            // The following are for testing & development
             use_local_database,
             randomize_scores,
+            use_system_time,
         },
         dynamo_db_client,
     );

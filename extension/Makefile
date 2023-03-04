@@ -1,6 +1,5 @@
-# Check if a .env file exists, and then load it
-ifneq (,$(wildcard ./.env))
-    include .env
+ifneq (,$(wildcard ../.env))
+    include ../.env
     export
 endif
 
@@ -12,8 +11,13 @@ install:
 dev: guard-BROWSER
 	$(MAKE) -j 2 dev-webpack-watch dev-$(BROWSER)-extension
 
-build: guard-BROWSER install
-	npx webpack --mode production --config webpack.$(BROWSER).config.js
+build: install
+	npx webpack --mode development --config webpack.firefox.config.js
+	npx webpack --mode development --config webpack.chrome.config.js
+
+build-release: install
+	npx webpack --mode production --config webpack.firefox.config.js
+	npx webpack --mode production --config webpack.chrome.config.js
 
 clean:
 	rm -rf dist
@@ -33,7 +37,7 @@ dev-firefox-extension:
 dev-chrome-extension:
 	# Open up chrome with the extension loaded and two tabs that are helpful for development
 	# TODO: Not very system independent :(
-	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=github+en.wikipedia+twitter chrome://extensions/ chrome-extension://kglbdhongcfkafgfgofpgaehafnbgnhd/menu/menu.html
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=github+en.wikipedia+twitter chrome://extensions/ chrome-extension://kglbdhongcfkafgfgofpgaehafnbgnhd/popup/popup.html
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards

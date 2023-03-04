@@ -1,17 +1,34 @@
+ifneq (,$(wildcard ../.env))
+    include ../.env
+    export
+endif
+
 # Primary targets
 
 install:
 	poetry install
 
-dev: stop-local-database stop-lambda
-	$(MAKE) --jobs=2 start-lambda start-local-database
+dev: start
+	poetry run python database.py load_development_votes
+
+start: build stop start-local-database start-lambda
+	sleep 15 # Wait a bit for everything to get up and running
+stop: stop-lambda stop-local-database
+
+build: install
+	@echo "Make sure the local dynamodb is pulled and ready to run"
+	docker-compose pull
+	@echo "Build the lambda function"
+	cd lambda && $(MAKE) build
 
 test:
-	poetry run python -m unittest discover
 	cd lambda && $(MAKE) test
+	$(MAKE) start
+	@curl -s localhost:8000 > /dev/null || (echo "No local database found!" && exit 1)
+	@curl -s localhost:9000 || (echo "No local lambda found!" && exit 1)
+	poetry run pytest # --capture=no to see stdout
+	$(MAKE) stop
 
-build:
-	cd lambda && $(MAKE) build
 
 deploy: build
 	sam deploy
@@ -31,20 +48,17 @@ seed: install seed/hacker_news_submissions seed/seed.csv
 
 # Secondary targets
 
-setup-database: install
-	poetry run python database.py setup
-	@echo "\nREADY"
-
 start-lambda:
-	cd lambda && $(MAKE) dev
+	cd lambda && $(MAKE) dev &
 
 stop-lambda:
-	pkill cargo-lambda || true
+	cd lambda && $(MAKE) stop
 
-start-local-database: 
+start-local-database:
 	@echo "Start the local database"
-	sleep 3 && poetry run python database.py setup &
-	docker-compose up
+	docker-compose up -d
+	@echo "Wait a couple seconds before running the setup scripts"
+	sleep 5 && poetry run python database.py setup
 
 stop-local-database:
 	docker-compose down
@@ -57,3 +71,6 @@ seed/hacker_news_submissions:
 
 seed/seed.csv:
 	poetry run python database.py generate_seed_data --input_files="seed/hacker_news_submissions/submissions_*.csv" --output="seed/seed.csv"
+
+guard-%:
+	@if [ -z '${${*}}' ]; then echo 'ERROR: variable $* not set' && exit 1; fi

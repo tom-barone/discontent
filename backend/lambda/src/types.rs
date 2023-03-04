@@ -7,6 +7,7 @@ pub struct Config {
     pub table_name: String,
     pub use_local_database: bool,
     pub randomize_scores: bool,
+    pub use_system_time: bool,
 }
 
 #[derive(Debug, Validate, Serialize, Deserialize, PartialEq, Eq, Hash, Clone)]

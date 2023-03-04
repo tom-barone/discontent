@@ -7,9 +7,11 @@ class TestGoogle < CapybaraTestCase
   %i[chrome].each do |browser|
     define_method("test_#{browser}_displays_icons_on_links") do
       Capybara.current_driver = browser
-      visit('https://www.google.com/search?q=github+en.wikipedia+twitter')
+      visit('https://www.google.com/search?q=wikipedia')
       assert_text(:all, /💚 .+/)
+      visit('https://www.google.com/search?q=github')
       assert_text(:all, /🤨 .+/)
+      visit('https://www.google.com/search?q=twitter')
       assert_text(:all, /💢 .+/)
     end
   end

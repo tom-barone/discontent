@@ -1,10 +1,10 @@
+import os
 import fire
 import boto3
 import csv
 from cfn_tools import load_yaml
 import yaml
 import requests
-# import aiohttp
 import glob
 import pandas as pd
 from urllib.parse import urlparse
@@ -38,8 +38,7 @@ def drop():
 
 
 def load_settings():
-    fixtures = yaml.safe_load(open('fixtures/database.yaml'))
-    # Settings
+    fixture = yaml.safe_load(open('fixtures/database.yaml'))
     config = _load_config()
     dynamodb.put_item(
         TableName=config['TableName'],
@@ -54,19 +53,18 @@ def load_settings():
                 'S': 'Settings'
             },
             'voting_is_disabled': {
-                'BOOL': fixtures['settings']['voting_is_disabled']
+                'BOOL': fixture['settings']['voting_is_disabled']
             },
             'maximum_votes_per_user_per_day': {
-                'N':
-                str(fixtures['settings']['maximum_votes_per_user_per_day'])
+                'N': str(fixture['settings']['maximum_votes_per_user_per_day'])
             },
         })
-    print('Loaded default settings')
+    print('Loaded initial database settings')
 
 
-def load_test_data():
+def load_development_votes():
     fixtures = yaml.safe_load(open('fixtures/database.yaml'))
-    for link_detail in tqdm(fixtures['links']):
+    for link_detail in tqdm(fixtures['development_links']):
         count_of_votes = link_detail['count_of_votes']
         sum_of_votes = link_detail['sum_of_votes']
         link = link_detail['link']
@@ -87,36 +85,14 @@ def load_test_data():
                 },
                 "value": vote_value,
                 # Generate a UUID, <3 bel
-                "user_id": f"BEDA{i:04}-4822-4342-0990-b92d94d9489a",
+                "user_id": f"beda{i:04}-4822-4342-0990-b92d94d9489a",
             }
             response = requests.post(f'{API_ENDPOINT}/v1/vote', json=vote)
             response.raise_for_status()
+    print('Loaded development votes')
 
 
-# def seed():
-# with open('fixtures/seed_votes.csv', 'r') as f:
-# reader = csv.DictReader(f)
-# admin_votes = []
-# for daily_summary in reader:
-# total_votes = int(daily_summary['scaled_votes'])
-# vote_value = 1 if total_votes > 0 else -1
-# for i in range(total_votes):
-# admin_votes.append({
-# "timestamp": "2023-02-02T09:36:03Z",
-# "vote": {
-# "link": daily_summary['link'],
-# "vote_value": vote_value,
-# "user_id": f"BEDA{i:04}-4822-4342-0990-b92d94d9489a",
-# }
-# })
-# print(daily_summary['link'])
-
-# response = requests.post(f'{API_ENDPOINT}/admin/votes',
-# json=admin_votes)
-# print(response.text)
-
-
-def generate_seed_data(input_files, output):
+def generate_production_seed_data(input_files, output):
     """
     Process submissions from Hacker News and output them into
     the DynamoDB seed format
@@ -127,7 +103,7 @@ def generate_seed_data(input_files, output):
     4. Scale the votes so we get results between reasonable numbers
 
     Example usage:
-        database.py generate_seed_data
+        database.py generate_production_seed_data
             --input_files="seed/hacker_news_submissions/submissions_*.csv
             --output="seed/seed.csv"
     """
@@ -140,7 +116,7 @@ def generate_seed_data(input_files, output):
     ])
 
     # Step 2
-    df['link'] = df['link'].map(lambda l: urlparse(l).hostname)
+    df['link'] = df['link'].map(lambda link: urlparse(link).hostname)
     # Manual fix for _.0xffff.me
     df['link'] = df['link'].replace('_.0xffff.me', 'me.0xffff.me')
 
@@ -158,7 +134,7 @@ def generate_seed_data(input_files, output):
                           (current_max - current_min) + new_min).astype(int)
 
     seed_rows = []
-    user = 'BEDA0000-4822-4342-0990-b92d94d9489a'
+    user = 'beda0000-4822-4342-0990-b92d94d9489a'
     for index, row in df.iterrows():
         for i in range(row['scaled_votes']):
             # Votes
@@ -225,54 +201,6 @@ def setup():
     drop()
     create()
     load_settings()
-    # print(table['TableNames'])
-    # print(dynamodb.delete_table(TableName=table))
-
-    # # Create the DynamoDB table.
-    # table = dynamodb.create_table(TableName='users',
-    # KeySchema=[{
-    # 'AttributeName': 'username',
-    # 'KeyType': 'HASH'
-    # }, {
-    # 'AttributeName': 'last_name',
-    # 'KeyType': 'RANGE'
-    # }],
-    # AttributeDefinitions=[
-    # {
-    # 'AttributeName': 'username',
-    # 'AttributeType': 'S'
-    # },
-    # {
-    # 'AttributeName': 'last_name',
-    # 'AttributeType': 'S'
-    # },
-    # ],
-    # ProvisionedThroughput={
-    # 'ReadCapacityUnits': 5,
-    # 'WriteCapacityUnits': 5
-    # })
-
-    # # Wait until the table exists.
-    # table.wait_until_exists()
-
-    # # Print out some data about the table.
-    # table = dynamodb.Table('users')
-
-    # table.put_item(
-    # Item={
-    # 'username': 'janedoe',
-    # 'first_name': 'Jane',
-    # 'last_name': 'Doe',
-    # 'age': 25,
-    # 'account_type': 'standard_user',
-    # })
-
-    # # Print out some data about the table.
-    # # This will cause a request to be made to DynamoDB and its attribute
-    # # values will be set based on the response.
-    # print(table.creation_date_time)
-    # print(list(dynamodb.tables.all()))
-    # print(table.item_count)
 
 
 def _load_config():
@@ -293,5 +221,6 @@ if __name__ == '__main__':
         'create': create,
         'drop': drop,
         'setup': setup,
-        'load_test_data': load_test_data,
+        'load_settings': load_settings,
+        'load_development_votes': load_development_votes
     })

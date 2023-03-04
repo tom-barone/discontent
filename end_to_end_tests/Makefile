@@ -1,6 +1,5 @@
-# Check if a .env file exists, and then load it
-ifneq (,$(wildcard ./.env))
-    include .env
+ifneq (,$(wildcard ../.env))
+    include ../.env
     export
 endif
 
@@ -10,9 +9,12 @@ install:
 	bundle install
 
 test: guard-CHROME_EXTENSION_ID guard-FIREFOX_EXTENSION_ID install
+	cd ../extension && $(MAKE) build
+	cd ../backend && $(MAKE) dev
 	@echo "Check that the backend is running"
 	@curl localhost:9000 || (echo "No local backend is running!" && exit 1)
 	rake test
+	cd ../backend && $(MAKE) stop
 
 clean:
 	rm -rf ci

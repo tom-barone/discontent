@@ -1,6 +1,5 @@
-# Check if a .env file exists, and then load it
-ifneq (,$(wildcard ./.env))
-    include .env
+ifneq (,$(wildcard ../../.env))
+    include ../../.env
     export
 endif
 
@@ -14,6 +13,10 @@ dev: guard-TABLE_NAME guard-LOG_LEVEL guard-USE_LOCAL_DATABASE guard-RANDOMIZE_S
 build:
 	cargo build
 	cargo lambda build --release --arm64
+
+stop:
+	@echo "Force stopping the lambda"
+	pkill -l cargo-lambda || true
 
 clean:
 	cargo clean

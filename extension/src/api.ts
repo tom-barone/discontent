@@ -26,7 +26,7 @@ export async function fetchScores(
 }
 
 export async function submitVote(
-  vote_value: 1 | -1,
+  value: 1 | -1,
   hostname: string,
   user_id: string
 ): Promise<boolean> {
@@ -37,7 +37,7 @@ export async function submitVote(
       link: {
         hostname,
       },
-      vote_value,
+      value,
       user_id,
     }),
   });

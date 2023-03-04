@@ -10,22 +10,20 @@ install:
 	cd extension && $(MAKE) install
 	cd backend && $(MAKE) install
 
-dev: install
-	$(MAKE) --jobs=2 dev-extension dev-backend
+dev: stop
+	cd backend && $(MAKE) dev # will run services as background processes
+	cd extension && $(MAKE) dev
+
+stop:
+	cd backend && $(MAKE) stop # will stop the background processes
 
 test:
 	cd extension && $(MAKE) test
-	cd backend/lambda && $(MAKE) test
-	cd integration_tests && $(MAKE) test
+	cd backend && $(MAKE) test
+	cd end_to_end_tests && $(MAKE) test
 	@echo 'Tests succeeded'
 
 # Secondary targets
-
-dev-extension:
-	cd extension && $(MAKE) dev
-
-dev-backend:
-	cd backend && $(MAKE) dev
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards

@@ -16,7 +16,9 @@ class CapybaraTestCase < Minitest::Test
   chrome_options.add_argument('--load-extension=../extension/dist/chrome')
   chrome_options.add_argument('--headless=new') if ENV['HEADLESS'] == 'true'
   Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new(app, browser: :chrome, options: chrome_options)
+    driver = Capybara::Selenium::Driver.new(app, browser: :chrome, options: chrome_options)
+    driver.browser.manage.window.resize_to(1920, 1080)
+    driver
   end
 
   # Firefox setup
@@ -24,6 +26,7 @@ class CapybaraTestCase < Minitest::Test
   firefox_options.add_argument('-headless') if ENV['HEADLESS'] == 'true'
   Capybara.register_driver :firefox do |app|
     driver = Capybara::Selenium::Driver.new(app, browser: :firefox, options: firefox_options)
+    driver.browser.manage.window.resize_to(1920, 1080)
     driver.browser.install_addon('../extension/dist/firefox', true)
     sleep(1) # Give the extension a second to install
     driver
@@ -36,7 +39,7 @@ class CapybaraTestCase < Minitest::Test
   def extension_popup_url
     case Capybara.current_driver
     when :chrome
-      return "chrome-extension://#{ENV['CHROME_EXTENSION_ID']}/menu/menu.html"
+      return "chrome-extension://#{ENV['CHROME_EXTENSION_ID']}/popup/popup.html"
     when :firefox
       prefs_file = "#{page.driver.browser.capabilities['moz:profile']}/prefs.js"
       # Extract the webextensions uuids
@@ -46,7 +49,7 @@ class CapybaraTestCase < Minitest::Test
       uuid_match.gsub!('\\', '')
       # Parse the uuid_match as JSON
       uuids = JSON.parse(uuid_match)
-      return "moz-extension://#{uuids[ENV['FIREFOX_EXTENSION_ID']]}/menu/menu.html"
+      return "moz-extension://#{uuids[ENV['FIREFOX_EXTENSION_ID']]}/popup/popup.html"
     end
     throw 'Unknown driver'
   end

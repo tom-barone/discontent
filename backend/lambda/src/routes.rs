@@ -22,12 +22,20 @@ pub async fn vote(
     dynamo_db_client: &Client,
 ) -> Result<Body, Error> {
     let vote_request = validate_vote_request(request.body())?;
+
+    let created_at: String;
+    if config.use_system_time {
+        // Always use "2018-01-26T18:30:09Z" format
+        created_at = Utc::now().to_rfc3339_opts(SecondsFormat::Secs, true);
+    } else {
+        created_at = "2022-07-27T12:30:00Z".to_string(); // For testing, <3 bel
+    }
+
     let vote = Vote {
         link: vote_request.link.clone(),
         user_id: vote_request.user_id.clone(),
         value: vote_request.value,
-        // Get created_at timestamp in "2018-01-26T18:30:09Z" format
-        created_at: Utc::now().to_rfc3339_opts(SecondsFormat::Secs, true),
+        created_at,
     };
     // Extract day string `2023-02-09`
     let day = vote.created_at.clone()[..10].to_string();
@@ -59,7 +67,7 @@ pub async fn vote(
     let mut user_is_banned = false;
     let mut first_vote_on_link_for_user = true;
     let mut voting_is_disabled = false;
-    let mut user_has_voted_too_many_times_today = false;
+    let mut user_has_reached_max_vote_limit_for_today = false;
     let mut maximum_votes_per_user_per_day: u32 = 10;
     let mut old_vote: Option<Vote> = None;
     for item in settings_and_user_request
@@ -88,7 +96,7 @@ pub async fn vote(
             "UserHistory" => {
                 let daily_user_history = UserHistory::try_from(item)?;
                 // Assumes the settings have already been retrieved
-                user_has_voted_too_many_times_today =
+                user_has_reached_max_vote_limit_for_today =
                     daily_user_history.count_of_votes >= maximum_votes_per_user_per_day;
             }
             "Vote" => {
@@ -107,7 +115,7 @@ pub async fn vote(
     if voting_is_disabled {
         return Err("Voting is disabled".into());
     }
-    if user_has_voted_too_many_times_today {
+    if first_vote_on_link_for_user && user_has_reached_max_vote_limit_for_today {
         return Err("User has voted too many times today".into());
     }
 
@@ -147,7 +155,7 @@ pub async fn vote(
         .set_transact_items(Some(write_requests))
         .send()
         .await?;
-        
+
     debug!("Successfully submitted vote [result={:?}]", write_result);
 
     return Ok(Body::Empty);

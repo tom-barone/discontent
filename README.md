@@ -20,7 +20,7 @@ Inspired by my 💢 **deep hate** 💢 of those AI customer support bots. And SE
 
 💚 When you find a site that is a beautiful smiling breath of fresh air; use the extension popup to vote and share your love.
 
-💢 When you find a site that kicks down your door, calls you stupid and holds out its greasy fist demanding ad revenue; use the popup to warn your next fellow human.
+💢 When you find a site that kicks down your door, calls you stupid and holds out its greasy hand demanding ad revenue; use the popup to warn the next bloke.
 
 To get things off the ground, I've used the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news). I've gone back a year in time and taken the best 30 from each day to build a set of good links, hopefully that's a good starting point.
 

@@ -24,8 +24,8 @@ class TestExtensionPopup < CapybaraTestCase
       assert_no_text('Settings')
       assert_button('Upvote button')
       assert_button('Downvote button')
-      assert_equal find_button('Upvote button').text, '💚'
-      assert_equal find_button('Downvote button').text, '💢'
+      assert_equal find_button('Upvote button').text.strip, '💚'
+      assert_equal find_button('Downvote button').text.strip, '💢'
     end
 
     define_method("test_#{browser}_can_show_and_hide_the_settings_page") do
@@ -82,8 +82,8 @@ class TestExtensionPopup < CapybaraTestCase
 
       # Check the vote buttons show the new icons
       click_on('Close settings')
-      assert_equal find_button('Upvote button').text, 'g'
-      assert_equal find_button('Downvote button').text, 'b'
+      assert_equal find_button('Upvote button').text.strip, 'g'
+      assert_equal find_button('Downvote button').text.strip, 'b'
 
       # Open settings again and reset
       click_on('Open settings')
@@ -96,8 +96,8 @@ class TestExtensionPopup < CapybaraTestCase
       assert_equal controversial_icon_input.value, '🤨'
       assert_equal bad_icon_input.value, '💢'
       click_on('Close settings')
-      assert_equal find_button('Upvote button').text, '💚'
-      assert_equal find_button('Downvote button').text, '💢'
+      assert_equal find_button('Upvote button').text.strip, '💚'
+      assert_equal find_button('Downvote button').text.strip, '💢'
     end
 
     define_method("test_#{browser}_setting_the_vote_icons_to_invalid_values") do
