@@ -32,12 +32,12 @@ dev-webpack-watch: guard-BROWSER
 
 dev-firefox-extension:
 	# Open up firefox with the extension loaded and two tabs that are helpful for development
-	cd dist/firefox && npx web-ext run --start-url https://www.google.com/search?q=github+en.wikipedia+twitter about:debugging
+	cd dist/firefox && npx web-ext run --start-url https://www.google.com/search?q=github+en.wikipedia+twitter https://www.bing.com/search?q=github+en.wikipedia+twitter https://duckduckgo.com/?q=github+en.wikipedia+twitter about:debugging
 
-dev-chrome-extension:
+dev-chrome-extension: build
 	# Open up chrome with the extension loaded and two tabs that are helpful for development
 	# TODO: Not very system independent :(
-	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=github+en.wikipedia+twitter chrome://extensions/ chrome-extension://kglbdhongcfkafgfgofpgaehafnbgnhd/popup/popup.html
+	/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --load-extension=./dist/chrome https://www.google.com/search?q=github+en.wikipedia+twitter https://www.bing.com/search?q=github+en.wikipedia+twitter https://duckduckgo.com/?q=github+en.wikipedia+twitter chrome://extensions/ chrome-extension://kglbdhongcfkafgfgofpgaehafnbgnhd/popup/popup.html
 
 # Guard to fail the make target if the specified env variable doesn't exist
 # https://lithic.tech/blog/2020-05/makefile-wildcards

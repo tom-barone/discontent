@@ -1,5 +1,5 @@
 {
-  "manifest_version": 3,
+  "manifest_version": 2,
   "name": "Discontent",
   "version": "1.0",
   "description": "Decorate links that are garbage",
@@ -10,7 +10,7 @@
     "activeTab",
     "storage"
   ],
-  "action": {
+  "browser_action": {
     "default_icon": "icons/green_heart.png",
     "default_title": "Discontent",
     "default_popup": "popup/popup.html"
@@ -21,7 +21,9 @@
         "*://*/*"
       ],
       "include_globs": [
-        "*://*.google.*/*"
+        "*://*.google.*/*",
+        "*://*.bing.com/*",
+        "*://duckduckgo.com/*"
       ],
       "js": [
         "content_scripts/index.js"

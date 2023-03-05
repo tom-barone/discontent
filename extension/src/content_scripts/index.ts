@@ -10,7 +10,7 @@ import { Settings } from "../settings";
  * 	 4. Send the links to the background script and request their scores
  * 	 5. Add the scores to the links
  */
-(() => {
+window.onload = function () {
   // Step 1
   if (window.hasRun) {
     return;
@@ -25,42 +25,43 @@ import { Settings } from "../settings";
   }
 
   // Step 3
-  const search_engine_links = search_engine.getAllLinks();
-  if (search_engine_links.length === 0) {
-    return;
-  }
-
-  // Step 4
-	const settings = new Settings(browser);
-  Promise.all([
-    settings.get_icons(),
-    browser.runtime.sendMessage({
-      type: "ScoresRequest",
-      data: new ScoresRequest(search_engine_links),
-    }),
-  ])
-    .then(([icons, message]) => {
-      const scoresResponse = (message as ScoresResponseMessage).data;
-      // Step 5
-      search_engine_links.forEach((search_engine_link) => {
-        switch (scoresResponse[search_engine_link.link.hostname]) {
-          case "Good":
-            search_engine_link.addSymbol(icons.good);
-            break;
-          case "Controversial":
-            search_engine_link.addSymbol(icons.controversial);
-            break;
-          case "Bad":
-            search_engine_link.addSymbol(icons.bad);
-            break;
-          case "NoScore":
-          default:
-          // Do nothing
-        }
+  search_engine
+    .getAllLinks()
+    .then((search_engine_links) => {
+      if (search_engine_links.length === 0) {
+        return;
+      }
+      // Step 4
+      const settings = new Settings(browser);
+      return Promise.all([
+        settings.get_icons(),
+        browser.runtime.sendMessage({
+          type: "ScoresRequest",
+          data: new ScoresRequest(search_engine_links),
+        }),
+      ]).then(([icons, message]) => {
+        const scoresResponse = (message as ScoresResponseMessage).data;
+        // Step 5
+        search_engine_links.forEach((search_engine_link) => {
+          switch (scoresResponse[search_engine_link.link.hostname]) {
+            case "Good":
+              search_engine_link.addSymbol(icons.good);
+              break;
+            case "Controversial":
+              search_engine_link.addSymbol(icons.controversial);
+              break;
+            case "Bad":
+              search_engine_link.addSymbol(icons.bad);
+              break;
+            case "NoScore":
+            default:
+            // Do nothing
+          }
+        });
       });
     })
     .catch((error) => {
       // TODO: Handle the error somehow
       console.error(error);
     });
-})();
+}

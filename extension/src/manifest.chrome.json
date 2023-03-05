@@ -21,7 +21,9 @@
         "*://*/*"
       ],
       "include_globs": [
-        "*://*.google.*/*"
+        "*://*.google.*/*",
+        "*://*.bing.com/*",
+        "*://duckduckgo.com/*"
       ],
       "js": [
         "content_scripts/index.js"

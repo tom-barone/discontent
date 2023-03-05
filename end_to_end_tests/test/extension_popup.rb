@@ -128,7 +128,7 @@ class TestExtensionPopup < CapybaraTestCase
       click_on('Open settings')
       new_window = window_opened_by { click_link 'Icon list' }
       within_window new_window do
-        assert_text('Full Emoji List, v15.0')
+        assert_text('Emoji List, v15.0')
       end
     end
   end

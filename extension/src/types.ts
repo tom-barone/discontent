@@ -20,7 +20,15 @@ export interface ScoresResponseMessage {
   data: ScoresResponse;
 }
 
-export type Message = ScoresRequestMessage | ScoresResponseMessage;
+export interface BingReferralMessage {
+  type: "BingReferral";
+  data: string;
+}
+
+export type Message =
+  | ScoresRequestMessage
+  | ScoresResponseMessage
+  | BingReferralMessage;
 
 export enum Score {
   Good = "Good",

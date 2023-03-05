@@ -28,7 +28,7 @@ class CapybaraTestCase < Minitest::Test
     driver = Capybara::Selenium::Driver.new(app, browser: :firefox, options: firefox_options)
     driver.browser.manage.window.resize_to(1920, 1080)
     driver.browser.install_addon('../extension/dist/firefox', true)
-    sleep(1) # Give the extension a second to install
+    sleep(5) # Give the extension a few seconds to install
     driver
   end
 
