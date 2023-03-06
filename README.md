@@ -50,3 +50,6 @@ When a user submits a vote it stores the vote, the timestamp and a randomly gene
 The extension itself is written in Typescript. The web API runs off an AWS lambda built in Rust, and the whole thing is backed by DynamoDB. There's some piecemeal python & ruby scripts for testing.
 
 For the nuts and bolts, see the [Architecture](./docs/architecture.md) page.
+
+For instructions on building, testing & developing; see the [Contributing](./docs/contributing.md) page.
+

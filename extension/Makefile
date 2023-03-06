@@ -20,6 +20,7 @@ build: guard-LAMBDA_API_URL clean install
 	$(WEBPACK_CMD) --env BROWSER=firefox
 	$(WEBPACK_CMD) --env BROWSER=chrome
 	cd dist/firefox && npx web-ext build --overwrite-dest
+	cd dist/chrome && zip discontent.zip *
 
 clean:
 	rm -rf dist

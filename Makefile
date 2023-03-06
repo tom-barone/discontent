@@ -6,13 +6,13 @@ endif
 
 # Primary targets
 
-install:
-	cd extension && $(MAKE) install
-	cd backend && $(MAKE) install
-
 dev: stop
 	cd backend && $(MAKE) dev # will run services as background processes
 	cd extension && $(MAKE) dev
+
+build:
+	cd extension && $(MAKE) build
+	cd backend && $(MAKE) build
 
 stop:
 	cd backend && $(MAKE) stop # will stop the background processes
