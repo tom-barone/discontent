@@ -116,12 +116,13 @@ def generate_production_seed_data(input_files, output):
     ])
 
     # Step 2
+    df['old_link'] = df['link']
     df['link'] = df['link'].map(lambda link: urlparse(link).hostname)
     # Manual fix for _.0xffff.me
     df['link'] = df['link'].replace('_.0xffff.me', 'me.0xffff.me')
 
     # Step 3
-    df = df.groupby(['link'])['votes'].sum().to_frame()
+    df = df.groupby(['link', 'old_link'])['votes'].sum().to_frame()
     df = df.sort_values(by='votes', ascending=False)
     df = df.reset_index()
 
@@ -132,6 +133,8 @@ def generate_production_seed_data(input_files, output):
     current_max = df['votes'].max()
     df['scaled_votes'] = ((new_max - new_min) * (df['votes'] - current_min) /
                           (current_max - current_min) + new_min).astype(int)
+    # Because it's interesting to look at
+    df.to_csv('seed/ranked_list.csv', quoting=csv.QUOTE_ALL)
 
     seed_rows = []
     created_at = '2022-07-27T12:30:00Z'
