@@ -3,6 +3,9 @@ ifneq (,$(wildcard ../.env))
     export
 endif
 
+# Variables
+WEBPACK_CMD = npx webpack --mode development --config webpack.config.js --env LAMBDA_API_URL=$(LAMBDA_API_URL)
+
 # Primary targets
 
 install:
@@ -11,13 +14,12 @@ install:
 dev: guard-BROWSER
 	$(MAKE) -j 2 dev-webpack-watch dev-$(BROWSER)-extension
 
-build: install
-	npx webpack --mode development --config webpack.firefox.config.js
-	npx webpack --mode development --config webpack.chrome.config.js
-
-build-release: install
-	npx webpack --mode production --config webpack.firefox.config.js
-	npx webpack --mode production --config webpack.chrome.config.js
+# This is used for production builds as well
+# https://extensionworkshop.com/documentation/publish/source-code-submission/#use-of-obfuscated-code
+build: guard-LAMBDA_API_URL clean install
+	$(WEBPACK_CMD) --env BROWSER=firefox
+	$(WEBPACK_CMD) --env BROWSER=chrome
+	cd dist/firefox && npx web-ext build --overwrite-dest
 
 clean:
 	rm -rf dist
@@ -27,8 +29,8 @@ test: install
 
 # Secondary targets
 
-dev-webpack-watch: guard-BROWSER
-	npx webpack --mode development --watch --config webpack.$(BROWSER).config.js
+dev-webpack-watch: guard-LAMBDA_API_URL guard-BROWSER
+	$(WEBPACK_CMD) --watch --env BROWSER=$(BROWSER)
 
 dev-firefox-extension:
 	# Open up firefox with the extension loaded and two tabs that are helpful for development

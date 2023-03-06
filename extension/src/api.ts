@@ -1,9 +1,6 @@
 import { Score, ScoresRequest, ScoresResponse } from "./types";
 
-const ENDPOINT =
-  process.env.NODE_ENV === "production"
-    ? " https://5h7cyehfq1.execute-api.us-east-1.amazonaws.com/v1"
-    : "http://localhost:9000/lambda-url/request-handler/v1";
+const ENDPOINT = process.env.LAMBDA_API_URL;
 
 export async function fetchScores(
   request: ScoresRequest

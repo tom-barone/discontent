@@ -26,7 +26,7 @@ export default class extends Controller<HTMLButtonElement> {
 
   load_icon() {
     this.settings.get_icon(this.voteValue).then((icon) => {
-      this.iconTarget.innerHTML = icon;
+      this.iconTarget.innerText = icon;
       this.element.classList.remove("invisible");
     });
   }

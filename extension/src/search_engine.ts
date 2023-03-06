@@ -142,10 +142,10 @@ export class SearchEngineLink {
   }
 
   public addSymbol(symbol: string): void {
-    if (this._textElement.innerHTML.startsWith(symbol)) {
+    if (this._textElement.innerText.startsWith(symbol)) {
       // Do nothing if there's already a symbol
       return;
     }
-    this._textElement.innerHTML = `${symbol} ${this._textElement.innerHTML}`;
+    this._textElement.innerText = `${symbol} ${this._textElement.innerText}`;
   }
 }

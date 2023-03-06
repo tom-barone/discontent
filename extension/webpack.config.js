@@ -1,7 +1,8 @@
 const path = require("path");
+const webpack = require("webpack");
 const CopyPlugin = require("copy-webpack-plugin");
 
-module.exports = {
+module.exports = (env) => ({
   entry: {
     "content_scripts/index": "./src/content_scripts/index.ts",
     "background_scripts/index": "./src/background_scripts/index.ts",
@@ -44,16 +45,20 @@ module.exports = {
   },
   output: {
     filename: "[name].js",
-    path: path.resolve(__dirname, "dist/firefox"),
+    path: path.resolve(__dirname, `dist/${env.BROWSER}`),
   },
   plugins: [
+    new webpack.DefinePlugin({
+			// Want to be able to access this in the code
+      "process.env.LAMBDA_API_URL": JSON.stringify(env.LAMBDA_API_URL),
+    }),
     // Copy the manifest.json to the dist folder
     new CopyPlugin({
       patterns: [
-        { from: "./src/manifest.firefox.json", to: "manifest.json" },
+        { from: `./src/manifest.${env.BROWSER}.json`, to: "manifest.json" },
         { from: "./src/popup/popup.html", to: "popup/popup.html" },
         { from: "./src/icons", to: "icons" },
       ],
     }),
   ],
-};
+});
