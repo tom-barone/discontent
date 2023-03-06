@@ -1,4 +1,3 @@
-import os
 import fire
 import boto3
 import csv
@@ -9,6 +8,7 @@ import glob
 import pandas as pd
 from urllib.parse import urlparse
 from tqdm import tqdm
+import amazon.ion.simpleion as ion
 
 CONFIG_FILE = './template.yaml'
 API_ENDPOINT = 'http://localhost:9000/lambda-url/request-handler'
@@ -134,67 +134,61 @@ def generate_production_seed_data(input_files, output):
                           (current_max - current_min) + new_min).astype(int)
 
     seed_rows = []
-    user = 'beda0000-4822-4342-0990-b92d94d9489a'
+    created_at = '2022-07-27T12:30:00Z'
+    day = '2022-07-27'
+    user_id = 'beda0000-4822-4342-0990-b92d94d9489a'
+
     for index, row in df.iterrows():
         for i in range(row['scaled_votes']):
             # Votes
-            seed_rows.append({
-                'PK': f'link#{row["link"]}',
-                'SK': f'user#{user}',
-                'entity_type': 'Vote',
-                'vote_value': '1',
-                'vote_timestamp': '2022-07-27:12:00Z',
-                'UserVotes_PK': user
-            })
+            seed_rows.append('$ion_1_0 {Item:{' + f'PK:"link#{row["link"]}",' +
+                             f'SK:"user#{user_id}",' + 'value:1.,' +
+                             f'created_at:"{created_at}",' +
+                             f'UserVotes_PK:"{user_id}",' +
+                             'entity_type:"Vote"' + '}}')
 
         # Links
-        seed_rows.append({
-            'PK': f'link#{row["link"]}',
-            'SK': f'link#{row["link"]}',
-            'entity_type': 'Link',
-            'count_of_votes': row['scaled_votes'],
-            'sum_of_votes': row['scaled_votes']
-        })
+        seed_rows.append('$ion_1_0 {Item:{' + f'PK:"link#{row["link"]}",' +
+                         f'SK:"link#{row["link"]}",' +
+                         f'count_of_votes:{row["scaled_votes"]}.,' +
+                         f'sum_of_votes:{row["scaled_votes"]}.,' +
+                         'entity_type:"LinkDetail"' + '}}')
 
         # Link histories
-        seed_rows.append({
-            'PK': 'day#2023-01-10',
-            'SK': f'link#{row["link"]}',
-            'entity_type': 'LinkHistory',
-            'count_of_votes': row['scaled_votes'],
-            'sum_of_votes': row['scaled_votes'],
-            'DailyLinkHistory_PK': 'day#2023-01-10',
-        })
+        seed_rows.append('$ion_1_0 {Item:{' + f'PK:"day#{day}",' +
+                         f'SK:"link#{row["link"]}",' +
+                         f'count_of_votes:{row["scaled_votes"]}.,' +
+                         f'sum_of_votes:{row["scaled_votes"]}.,' +
+                         f'DailyLinkHistory_PK:"day#{day}",'
+                         'entity_type:"LinkHistory"' + '}}')
 
     # Users
-    seed_rows.append({
-        'PK': f'user#{user}',
-        'SK': f'user#{user}',
-        'entity_type': 'User',
-        'user_is_banned': True,  # This user can't vote
-        'user_notes': 'Initial HackerNews seed'
-    })
+    seed_rows.append('$ion_1_0 {Item:{' + f'PK:"user#{user_id}",' +
+                     f'SK:"user#{user_id}",' + 'is_banned:true,' +
+                     f'created_at:"{created_at}",' + 'entity_type:"User"' +
+                     '}}')
 
     # User histories
-    seed_rows.append({
-        'PK': 'day#2023-01-10',
-        'SK': f'user#{user}',
-        'entity_type': 'UserHistory',
-        'count_of_votes': df['scaled_votes'].sum(),
-        'sum_of_votes': df['scaled_votes'].sum(),
-        'DailyUserHistory_PK': 'day#2023-01-10'
-    })
+    seed_rows.append('$ion_1_0 {Item:{' + f'PK:"day#{day}",' +
+                     f'SK:"user#{user_id}",' + 'is_banned:true,' +
+                     f'count_of_votes:{df["scaled_votes"].sum()}.,' +
+                     f'sum_of_votes:{df["scaled_votes"].sum()}.,' +
+                     f'DailyUserHistory_PK:"day#{day}",' +
+                     'entity_type:"UserHistory"' + '}}')
 
     # Settings
-    seed_rows.append({
-        'PK': 'settings',
-        'SK': 'settings',
-        'entity_type': 'Settings',
-        'voting_is_disabled': False
-    })
+    seed_rows.append('$ion_1_0 {Item:{' + 'PK:"settings",' + 'SK:"settings",' +
+                     'voting_is_disabled:false,' +
+                     'maximum_votes_per_user_per_day:10.,' +
+                     'entity_type:"Settings"' + '}}')
 
-    seed_df = pd.DataFrame.from_dict(seed_rows)
-    seed_df.to_csv(output, quoting=csv.QUOTE_ALL, index=False)
+    for item in seed_rows:
+        # Check that the items are all valid ion objects
+        ion.loads(item)
+
+    # Write seed_rows to output file
+    with open(output, "w") as outfile:
+        outfile.write("\n".join(seed_rows))
 
 
 def setup():
@@ -222,5 +216,6 @@ if __name__ == '__main__':
         'drop': drop,
         'setup': setup,
         'load_settings': load_settings,
-        'load_development_votes': load_development_votes
+        'load_development_votes': load_development_votes,
+        'generate_production_seed_data': generate_production_seed_data
     })

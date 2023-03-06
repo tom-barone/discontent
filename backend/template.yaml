@@ -81,10 +81,11 @@ Resources:
       BillingMode: PAY_PER_REQUEST
       TableName: Discontent
       ImportSourceSpecification:
-        InputFormat: CSV
+        InputFormat: ION
+        InputCompressionType: NONE
         S3BucketSource:
           S3Bucket: "discontent-seed-bucket"
-          S3KeyPrefix: "seed.csv"
+          S3KeyPrefix: "seed.ion"
 
   RequestHandler:
     Type: AWS::Serverless::Function
@@ -112,10 +113,10 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref Database
-          ENVIRONMENT: production
           LOG_LEVEL: info
           USE_LOCAL_DATABASE: false
           RANDOMIZE_SCORES: false
+          USE_SYSTEM_TIME: true
       Policies:
         - DynamoDBCrudPolicy: # More info about SAM policy templates: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
             TableName: !Ref Database

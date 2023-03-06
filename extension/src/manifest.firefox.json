@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Discontent",
-  "version": "1.0",
+  "version": "1.1",
   "description": "Decorate links that are garbage",
   "icons": {
     "48": "icons/green_heart.png"

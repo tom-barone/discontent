@@ -96,6 +96,9 @@ async fn root_handler(
 fn not_found() -> Result<Response<Body>, Error> {
     Ok(Response::builder()
         .status(StatusCode::NOT_FOUND)
+        .header("Access-Control-Allow-Headers", "*")
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Methods", "POST, GET")
         .body(Body::Empty)
         .unwrap())
 }
@@ -124,6 +127,9 @@ fn server_error(body: Body) -> Result<Response<Body>, Error> {
     Ok(Response::builder()
         .status(StatusCode::INTERNAL_SERVER_ERROR)
         .header("content-type", "application/json")
+        .header("Access-Control-Allow-Headers", "*")
+        .header("Access-Control-Allow-Origin", "*")
+        .header("Access-Control-Allow-Methods", "POST, GET")
         .body(body)
         .unwrap())
 }
