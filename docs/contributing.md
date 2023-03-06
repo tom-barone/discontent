@@ -43,13 +43,15 @@ The environment variables are:
 
 ## Building the extension
 
-Recommended root `.env` file
+You'll need: [npm](https://docs.npmjs.com/), [make](https://www.gnu.org/software/make/), [web-ext](https://github.com/mozilla/web-ext)
+
+Recommended root `.env` file:
 
 ```
 LAMBDA_API_URL=https://2zeiy58jgk.execute-api.us-east-1.amazonaws.com/v1
 ```
 
-Run `make build` in the root directory. The builds will be in:
+Run `cd extension && make build` in the root directory. The builds will be in:
 
-- Firefox zip file: `./extension/dist/firefox/web-ext-artifacts/discontent-<version>.zip`
-- Chrome zip file: `./extension/dist/chrome/discontent.zip`
+- Firefox zip file: `<root>/extension/dist/firefox/web-ext-artifacts/discontent-<version>.zip`
+- Chrome zip file: `<root>/extension/dist/chrome/discontent.zip`
