@@ -4,14 +4,14 @@
   "version": "1.1",
   "description": "Decorate links that are garbage",
   "icons": {
-    "48": "icons/green_heart.png"
+    "48": "icons/green_heart-48.png"
   },
   "permissions": [
     "activeTab",
     "storage"
   ],
   "browser_action": {
-    "default_icon": "icons/green_heart.png",
+    "default_icon": "icons/green_heart-48.png",
     "default_title": "Discontent",
     "default_popup": "popup/popup.html"
   },

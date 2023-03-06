@@ -33,7 +33,7 @@ An `enum` that represents how good a website `Link` is. It has 4 possible values
 | --------------- | ------------------------------------------------------- |
 | `Good`          | Sum of all votes >= 20                                  |
 | `Bad`           | Sum of all votes <= -10                                 |
-| `Controversial` | (-10 < Sum of all votes < 20) && (Number of votes > 20) |
+| `Controversial` | (-10 < Sum of all votes < 20) && (Number of votes > 50) |
 | `NoScore`       | If none of the above                                    |
 
 The score is calculated in the API and exposed to the extension through the `/scores` request.
@@ -44,32 +44,31 @@ In the future this will probably need to be tweaked for more nuanced scoring, li
 
 Identified by a `UUID`. I wanted a passwordless system and this seemed like a flexible choice. Has a number of properties:
 
-- user_notes: `String`
-- user_is_banned: `Timestamp`
+- is_banned: `Boolean`
+- created_at: `Timestamp`
 
 ### Settings
 
 System wide configuration that can change the behaviour of everything.
 
 - voting_is_disabled: `Boolean`
+- maximum_votes_per_user_per_day: 10
 
 The idea behind `voting_is_disabled` is in case there's a spam armaggedon and all voting needs to be stopped.
 
 ## API
 
-_TODO: Link to a swagger page._
-
-| Request                                            | Response                       | Visibility                            |
-| -------------------------------------------------- | ------------------------------ | ------------------------------------- |
-| `GET /scores?for=[link1, link2, ...]`              | `[{link: Link, score: Score}]` | Public                                |
-| `POST /vote {link, vote, user_id}`                  |                                | Public                                |
+| Request                               | Response                       |
+| ------------------------------------- | ------------------------------ |
+| `GET /scores?for=[link1, link2, ...]` | `[{link: Link, score: Score}]` |
+| `POST /vote {link, vote, user_id}`    |                                |
 
 ## Database
 
 I decided to go with a NoSQL database for two reasons:
 
 1. It'd be cool to learn.
-1. My extremely basic understanding of NoSQL leads me to believe that it's better suited for what Discontent is trying to do.
+1. My extremely basic understanding of NoSQL leads me to believe that it's better suited for what this is trying to do.
    DynamoDB on AWS seems cheap enough and if this extension actually gets used and needs to scale then future Tom won't be boned.
 
 The access patterns are reasonably well defined:
@@ -78,25 +77,21 @@ The access patterns are reasonably well defined:
 | ----------------------------- | -------------------------------------------------- | --------------------------------------------------------- |
 | Get vote summaries for a Link | Summaries are `sum_of_votes` & `count_of_votes`    | `Table:Discontent - PK=link#<link>, SK=link#<link>`       |
 | Get all votes for a Link      | To calculate `sum_of_votes` & `count_of_votes`     | `Table:Discontent - PK=link#<link>, SK.startswith(user#)` |
-| Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`     |
-| Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`     |
-| Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<user_id>`      |
-| Get banned state for a User   | Prevent banned users from submitting more votes    | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>`   |
+| Get vote for a Link and user  | To make sure a user can't vote twice               | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`    |
+| Get vote for a Link and user  | To auto select the correct vote button             | `Table:Discontent - PK=link#<link>, SK=user#<user_id>`    |
+| Get vote summaries for a User | To limit the number of submissions in a time range | `Table:Discontent - PK=day#<date>, SK=user#<user_id>`     |
+| Get banned state for a User   | Prevent banned users from submitting more votes    | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>` |
 
 The following are analysis access patterns, not really part of regular usage.
 
 | Analysis Access Patterns              | Description                                 | Table & Filter                                             |
 | ------------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
-| Get User details                      | To carry out abuse investigations           | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>,`   |
-| Get all votes for a user              | To carry out abuse investigations           | `GSI:UserVotes - PK=user#<user_id>, SK.within(timerange)`   |
+| Get User details                      | To carry out abuse investigations           | `Table:Discontent - PK=user#<user_id>, SK=user#<user_id>,` |
+| Get all votes for a user              | To carry out abuse investigations           | `GSI:UserVotes - PK=user#<user_id>, SK.within(timerange)`  |
 | Get top users by daily count of votes | To identify possible abuse                  | `GSI:DailyUserHistory - PK=<day>, SK.top(N)`               |
 | Get top links by daily count of votes | To identify possible abuse                  | `GSI:DailyLinkHistoryByCountOfVotes - PK=<day>, SK.top(N)` |
 | Get top links by daily sum of votes   | To create a best links leaderboard          | `GSI:DailyLinkHistoryBySumOfVotes - PK=<day>, SK.top(N)`   |
 | Get top links by daily count of votes | To create a controversial links leaderboard | `GSI:DailyLinkHistoryByCountOfVotes - PK=<day>, SK.top(N)` |
-
-### Schema visualisations
-
-_TODO: Add images from the NoSQL workbench_
 
 ## Sequence diagrams
 
