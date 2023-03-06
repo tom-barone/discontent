@@ -56,13 +56,13 @@ class TestExtensionPopup < CapybaraTestCase
     define_method("test_#{browser}_changing_and_resetting_the_vote_settings") do
       prepare(browser)
       click_on('Open settings')
+      sleep(2) # enough for the open animation to finish
       good_icon_input = find(GOOD_ICON_SETTING_SELECTOR)
       controversial_icon_input = find(CONTROVERSIAL_ICON_SETTING_SELECTOR)
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
       assert_equal good_icon_input.value, '💚'
       assert_equal controversial_icon_input.value, '🤨'
       assert_equal bad_icon_input.value, '💢'
-      sleep(0.5) # enough for the open animation to finish
 
       # Set new icons
       good_icon_input.set('g')
@@ -87,6 +87,7 @@ class TestExtensionPopup < CapybaraTestCase
 
       # Open settings again and reset
       click_on('Open settings')
+      sleep(2) # enough for the open animation to finish
       click_on('Reset')
       assert_selector(TICK_SELECTOR, count: 3)
       sleep(3)
@@ -106,7 +107,7 @@ class TestExtensionPopup < CapybaraTestCase
       good_icon_input = find(GOOD_ICON_SETTING_SELECTOR)
       controversial_icon_input = find(CONTROVERSIAL_ICON_SETTING_SELECTOR)
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
-      sleep(0.5) # enough for the open animation to finish
+      sleep(2) # enough for the open animation to finish
 
       # Set invalid
       good_icon_input.send_keys('gg')
