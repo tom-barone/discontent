@@ -1,0 +1,29 @@
+# See here for list of installed packages under 'ubuntu-22.04'
+# https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+
+name: "continuous integration"
+on:
+  push:
+    branches: ["develop"]
+jobs:
+  run_tests:
+    runs-on: "ubuntu-22.04"
+    environment: "test"
+    env:
+      LAMBDA_API_URL: "http://localhost:9000/lambda-url/request-handler/v1"
+      TABLE_NAME: "Discontent"
+      LOG_LEVEL: "info"
+      RANDOMIZE_SCORES: "false"
+      USE_LOCAL_DATABASE: "true"
+      USE_SYSTEM_TIME: "false"
+      HEADLESS: "true"
+      CHROME_EXTENSION_ID: "kglbdhongcfkafgfgofpgaehafnbgnhd"
+      FIREFOX_EXTENSION_ID: "{3f504997-80b7-467d-9d7b-e2fbb6d55e34}"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v3"
+        with:
+          fetch-depth: 0
+
+      - name: "Run tests"
+        run: "make test"
