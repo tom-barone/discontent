@@ -16,7 +16,7 @@ build:
 
 stop:
 	@echo "Force stopping the lambda"
-	pkill -l cargo-lambda || true
+	pkill cargo-lambda || true
 
 clean:
 	cargo clean

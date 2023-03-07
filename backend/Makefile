@@ -17,7 +17,7 @@ stop: stop-lambda stop-local-database
 
 build: install
 	@echo "Make sure the local dynamodb is pulled and ready to run"
-	docker-compose pull
+	docker pull amazon/dynamodb-local
 	@echo "Build the lambda function"
 	cd lambda && $(MAKE) build
 
@@ -29,12 +29,11 @@ test:
 	poetry run pytest # --capture=no to see stdout
 	$(MAKE) stop
 
-
 deploy: build
 	sam deploy
 
 clean: stop-local-database
-	rm -rf __pycache__
+	rm -rf __pycache__ .pytest_cache
 
 redeploy:
 	sam delete
@@ -56,13 +55,12 @@ stop-lambda:
 
 start-local-database:
 	@echo "Start the local database"
-	docker-compose up -d
+	docker run --rm --name dynamodb -d -p 8000:8000 amazon/dynamodb-local -jar DynamoDBLocal.jar -port 8000 -inMemory -cors '*'
 	@echo "Wait a couple seconds before running the setup scripts"
 	sleep 5 && poetry run python database.py setup
 
 stop-local-database:
-	docker-compose down
-	rm -rf docker
+	docker stop dynamodb || true
 
 # Fetch the hacker news submissions from S3
 # This is better than scraping them all over again
