@@ -25,5 +25,13 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Install poetry"
+        run: "pipx install poetry"
+
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: '3.9'
+          cache: 'poetry'
+
       - name: "Run tests"
         run: "make test"
