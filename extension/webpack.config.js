@@ -7,6 +7,7 @@ module.exports = (env) => ({
     "content_scripts/index": "./src/content_scripts/index.ts",
     "background_scripts/index": "./src/background_scripts/index.ts",
     "popup/popup": "./src/popup/popup.ts",
+    "help/help": "./src/help/help.ts",
   },
   devtool: "inline-source-map",
   module: {
@@ -49,7 +50,7 @@ module.exports = (env) => ({
   },
   plugins: [
     new webpack.DefinePlugin({
-			// Want to be able to access this in the code
+      // Want to be able to access this in the code
       "process.env.LAMBDA_API_URL": JSON.stringify(env.LAMBDA_API_URL),
     }),
     // Copy the manifest.json to the dist folder
@@ -57,6 +58,10 @@ module.exports = (env) => ({
       patterns: [
         { from: `./src/manifest.${env.BROWSER}.json`, to: "manifest.json" },
         { from: "./src/popup/popup.html", to: "popup/popup.html" },
+        {
+          from: "./src/help/help.html",
+          to: "help/help.html",
+        },
         { from: "./src/icons", to: "icons" },
       ],
     }),

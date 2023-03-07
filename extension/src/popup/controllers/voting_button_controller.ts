@@ -7,7 +7,7 @@ const FADE_IN_AND_OUT_TIME = 200; // milliseconds
 const FADE_OUT_CHECK_AFTER = 1; // seconds
 
 export default class extends Controller<HTMLButtonElement> {
-	// TODO: Add displaying of errors somehow
+  // TODO: Add displaying of errors somehow
   static targets = ["icon", "spinner", "check"];
   static values = {
     vote: String,
@@ -55,15 +55,7 @@ export default class extends Controller<HTMLButtonElement> {
         const vote_value = this.voteValue === "good" ? 1 : -1;
         return submitVote(vote_value, hostname, user_id);
       })
-      .then((success) => {
-        if (success) {
-          console.log("Success!");
-        } else {
-          console.log("Failure!");
-        }
-      })
       .catch((error) => {
-        console.log("Catched!");
         console.log(error);
       })
       .finally(() => {

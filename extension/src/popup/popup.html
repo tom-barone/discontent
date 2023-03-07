@@ -9,15 +9,26 @@
     <div class="container-fluid pb-2">
       <span class="header">
         <h1>Discontent</h1>
-        <button
-          class="btn btn-dark settings"
-          type="button"
-          aria-label="Open settings"
-          data-bs-toggle="offcanvas"
-          data-bs-target="#settings-page"
-        >
-          <i class="bi bi-gear-fill"></i>
-        </button>
+				<div>
+					<button
+							class="btn btn-dark help"
+							type="button"
+							aria-label="Open help page"
+							data-controller="help-button"
+							data-action="help-button#open_help_page"
+							>
+							<i class="bi bi-info-circle"></i>
+					</button>
+					<button
+							class="btn btn-dark settings"
+							type="button"
+							aria-label="Open settings"
+							data-bs-toggle="offcanvas"
+							data-bs-target="#settings-page"
+							>
+							<i class="bi bi-gear-fill"></i>
+					</button>
+				</div>
       </span>
       <div>
         <button

@@ -132,6 +132,14 @@ class TestExtensionPopup < CapybaraTestCase
         assert_text('Emoji List, v15.0')
       end
     end
+
+    define_method("test_#{browser}_clicking_the_help_page") do
+      prepare(browser)
+      new_window = window_opened_by { click_on('Open help page') }
+      within_window new_window do
+        assert_text('Hello friend,')
+      end
+    end
   end
 
   def teardown

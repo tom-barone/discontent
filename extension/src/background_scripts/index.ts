@@ -16,3 +16,10 @@ browser.runtime.onMessage.addListener(
     return Promise.reject("Unknown message type");
   }
 );
+
+browser.runtime.onInstalled.addListener(function () {
+  // Open the help page
+  browser.tabs.create({
+    url: browser.runtime.getURL("/help/help.html"),
+  });
+});

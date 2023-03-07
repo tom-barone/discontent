@@ -8,7 +8,7 @@ As of writing, if I type `difference between reddit and twitter` into [Google](h
 
 Clearly this website is complete trash. With the advent of incredible AI tools like ChatGPT, I fear everyone out there that makes interesting and quality content will soon be buried by an immense ocean of AI generated, SEO optimised nonsense. All you lovely people producing good stuff, all I want to do is _find_ you. Use this extension to do so.
 
-Inspired by my 💢 **deep hate** 💢 of those AI customer support bots. And unethical SEO consultants.
+Inspired by my **deep hate** of those AI customer support bots. And immoral SEO consultants.
 
 ## How it works?
 
@@ -51,5 +51,4 @@ The extension itself is written in Typescript. The web API runs off an AWS lambd
 
 For the nuts and bolts, see the [Architecture](./docs/architecture.md) page.
 
-For instructions on building, testing & developing; see the [Contributing](./docs/contributing.md) page.
-
+For instructions on building, testing & developing see the [Contributing](./docs/contributing.md) page.

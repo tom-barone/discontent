@@ -86,8 +86,6 @@ class Bing extends SearchEngine {
   private async fetchLinkFromBingReferral(
     referral_url: string
   ): Promise<string> {
-    console.log(referral_url);
-
     return await fetch(referral_url)
       .then((response) => response.text())
       .then((text) => {
@@ -96,7 +94,6 @@ class Bing extends SearchEngine {
           return Promise.reject("Could not find link");
         }
         if (search_result.length !== 2) {
-          console.log(search_result);
           return Promise.reject("Regex returned unexepected results");
         }
         return search_result[1];

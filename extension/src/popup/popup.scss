@@ -8,7 +8,7 @@ html,
 body,
 div.offcanvas {
   // Size of the popup
-  width: 140px;
+  width: 160px;
 
   // White text dark background
   background: $background-color;
@@ -35,7 +35,7 @@ i.bi {
     padding: 0.1rem 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
 
     .input-group {
       // Fix display of status icons next to the input group
@@ -49,9 +49,9 @@ i.bi {
     }
 
     &-input {
-      margin-right: 0.4rem;
-      max-width: 2.5rem;
-      width: 2.5rem;
+      margin-right: 0.8rem;
+      max-width: 2.8rem;
+      width: 2.8rem;
       text-align: center;
     }
 
@@ -122,11 +122,19 @@ i.bi {
     align-items: center;
   }
 
-  button.settings {
-    padding: 0.2rem;
-    line-height: 0;
-    font-size: 1rem;
-    color: $text-color;
+  button {
+    &.help,
+    &.settings {
+      padding: 0.2rem;
+      line-height: 0;
+      font-size: 1rem;
+      color: $text-color;
+    }
+
+    &.help {
+      background: transparent;
+      border: none;
+    }
   }
 }
 
