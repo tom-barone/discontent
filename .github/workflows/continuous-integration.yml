@@ -33,5 +33,13 @@ jobs:
           python-version: '3.9'
           cache: 'poetry'
 
+      - name: "Set up Homebrew"
+        uses: "Homebrew/actions/setup-homebrew@master"
+
+      - name: "Install cargo-lambda"
+        run: |
+          brew tap cargo-lambda/cargo-lambda
+          brew install cargo-lambda
+
       - name: "Run tests"
         run: "make test"
