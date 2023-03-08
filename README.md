@@ -1,5 +1,10 @@
 # 💚 Discontent
 
+<div>
+<a href="https://addons.mozilla.org/addon/discontent" target="_blank"><img height=70 src="docs/assets/button_firefox.png" alt="Get Discontent for Firefox"></img></a>
+<!--<a href="" target="_blank"><img height=70 src="docs/assets/button_chrome.png" alt="Get Discontent for Chrome"></img></a>-->
+</div>
+
 This aims to be an open, crowdsourced browser extension to fight garbage content on the web.
 
 As of writing, if I type `difference between reddit and twitter` into [Google](https://www.google.com/search?q=difference%20between%20reddit%20and%20twitter), in the second result I get [this](https://askanydifference.com/difference-between-reddit-and-twitte/):

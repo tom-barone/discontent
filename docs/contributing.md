@@ -53,5 +53,4 @@ LAMBDA_API_URL=https://2zeiy58jgk.execute-api.us-east-1.amazonaws.com/v1
 
 Run `cd extension && make build` in the root directory. The builds will be in:
 
-- Firefox zip file: `<root>/extension/dist/firefox/web-ext-artifacts/discontent-<version>.zip`
-- Chrome zip file: `<root>/extension/dist/chrome/discontent.zip`
+- `<root>/extension/dist/packed/discontent-<browser>-<version>.zip`
