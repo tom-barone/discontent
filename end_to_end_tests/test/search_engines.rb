@@ -5,7 +5,7 @@ require_relative '../setup'
 class TestSearchEngines < CapybaraTestCase
   def check_search(domain)
     visit("https://#{domain}=site%3Aen.wikipedia.org")
-    # Do two visits because firefox sometimes gets all hung up on the first one
+    # Do two visits because they sometimes get hung up on the first one
     visit("https://#{domain}=site%3Aen.wikipedia.org")
     assert_text(:all, /💚 .+/)
     visit("https://#{domain}=site%3Agithub.com")

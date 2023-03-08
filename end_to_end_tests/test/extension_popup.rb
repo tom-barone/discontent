@@ -15,6 +15,16 @@ class TestExtensionPopup < CapybaraTestCase
     visit(extension_popup_url)
   end
 
+  def open_settings
+    click_on('Open settings')
+    sleep(2) # enough for the open animation to finish
+  end
+
+  def close_settings
+    click_on('Close settings')
+    sleep(2) # enough for the open animation to finish
+  end
+
   # Run tests for multiple browsers
   %i[firefox chrome].each do |browser|
     define_method("test_#{browser}_the_popup_displays_correctly") do
@@ -30,7 +40,7 @@ class TestExtensionPopup < CapybaraTestCase
 
     define_method("test_#{browser}_can_show_and_hide_the_settings_page") do
       prepare(browser)
-      click_on('Open settings')
+      open_settings
       assert_text('Settings')
       assert_text('Good')
       assert_text('Spicy')
@@ -44,7 +54,7 @@ class TestExtensionPopup < CapybaraTestCase
       assert_equal controversial_icon_input.value, '🤨'
       assert_equal bad_icon_input.value, '💢'
 
-      click_on('Close settings')
+      close_settings
       assert_no_text('Settings')
       assert_no_text('Good')
       assert_no_text('Spicy')
@@ -55,8 +65,7 @@ class TestExtensionPopup < CapybaraTestCase
 
     define_method("test_#{browser}_changing_and_resetting_the_vote_settings") do
       prepare(browser)
-      click_on('Open settings')
-      sleep(2) # enough for the open animation to finish
+      open_settings
       good_icon_input = find(GOOD_ICON_SETTING_SELECTOR)
       controversial_icon_input = find(CONTROVERSIAL_ICON_SETTING_SELECTOR)
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
@@ -81,13 +90,12 @@ class TestExtensionPopup < CapybaraTestCase
       assert_equal bad_icon_input.value, 'b'
 
       # Check the vote buttons show the new icons
-      click_on('Close settings')
+      close_settings
       assert_equal find_button('Upvote button').text.strip, 'g'
       assert_equal find_button('Downvote button').text.strip, 'b'
 
       # Open settings again and reset
-      click_on('Open settings')
-      sleep(2) # enough for the open animation to finish
+      open_settings
       click_on('Reset')
       assert_selector(TICK_SELECTOR, count: 3)
       sleep(3)
@@ -96,14 +104,14 @@ class TestExtensionPopup < CapybaraTestCase
       assert_equal good_icon_input.value, '💚'
       assert_equal controversial_icon_input.value, '🤨'
       assert_equal bad_icon_input.value, '💢'
-      click_on('Close settings')
+      close_settings
       assert_equal find_button('Upvote button').text.strip, '💚'
       assert_equal find_button('Downvote button').text.strip, '💢'
     end
 
     define_method("test_#{browser}_setting_the_vote_icons_to_invalid_values") do
       prepare(browser)
-      click_on('Open settings')
+      open_settings
       good_icon_input = find(GOOD_ICON_SETTING_SELECTOR)
       controversial_icon_input = find(CONTROVERSIAL_ICON_SETTING_SELECTOR)
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
@@ -126,7 +134,7 @@ class TestExtensionPopup < CapybaraTestCase
 
     define_method("test_#{browser}_clicking_the_icon_list_link") do
       prepare(browser)
-      click_on('Open settings')
+      open_settings
       new_window = window_opened_by { click_link 'Icon list' }
       within_window new_window do
         assert_text('Emoji List, v15.0')

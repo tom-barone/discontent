@@ -28,9 +28,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: "Setup ruby for end to end tests"
+        uses: "ruby/setup-ruby@v1"
+        with:
+          bundler-cache: true
+          working-directory: "./end_to_end_tests"
+
       - name: "Install poetry"
         run: "pipx install poetry"
-
       - uses: "actions/setup-python@v4"
         with:
           python-version: "3.9"
@@ -46,3 +51,10 @@ jobs:
 
       - name: "Run tests"
         run: "make test"
+
+      - name: "Save failed tests"
+        if: ${{ failure() }}
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: "failed-tests"
+          path: "end_to_end_tests/ci"
