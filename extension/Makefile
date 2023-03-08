@@ -13,14 +13,14 @@ install:
 	npm install
 
 dev: guard-BROWSER
-	$(MAKE) -j 2 dev-webpack-watch dev-$(BROWSER)-extension
+	$(MAKE) --jobs 2 dev-webpack-watch dev-$(BROWSER)-extension
 
 build: guard-LAMBDA_API_URL clean install
 	$(WEBPACK_CMD) --env BROWSER=firefox
 	$(WEBPACK_CMD) --env BROWSER=chrome
 	mkdir -p dist/packed
 	cd dist/firefox && npx web-ext build --overwrite-dest --artifacts-dir ../packed --filename discontent-firefox-$(FIREFOX_VERSION).zip
-	cd dist/chrome && zip ../packed/discontent-chrome-$(CHROME_VERSION).zip *
+	cd dist/chrome && zip -r ../packed/discontent-chrome-$(CHROME_VERSION).zip *
 
 clean:
 	rm -rf dist

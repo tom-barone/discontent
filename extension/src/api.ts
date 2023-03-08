@@ -28,7 +28,7 @@ export async function submitVote(
   user_id: string
 ): Promise<boolean> {
   const url = ENDPOINT + "/vote";
-  const response = await fetch(url, {
+  return fetch(url, {
     method: "POST",
     body: JSON.stringify({
       link: {
@@ -37,6 +37,25 @@ export async function submitVote(
       value,
       user_id,
     }),
-  });
-  return response.ok;
+  })
+    .catch((error) => {
+      console.error(error);
+      return Promise.reject("Could not connect to the Discontent API");
+    })
+    .then(async (response) => {
+      return [response.status, await response.text()];
+    })
+    .then(([status, response_object]) => {
+      if (status === 200) {
+        return true;
+      } else {
+        console.error(`Request error ${status}`, response_object);
+        // TODO:
+        // 		Add nice user formatted messages to the lambda response
+        // 		e.g. {error: "<full message>", user_message: "<user friendly message>"}
+        // 		Return the user message here
+        // 		console.error the full message
+        return Promise.reject("Could not submit your vote");
+      }
+    });
 }
