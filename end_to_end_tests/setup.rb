@@ -15,6 +15,7 @@ class CapybaraTestCase < Minitest::Test
   )
   chrome_options.add_argument('--load-extension=../extension/dist/chrome')
   chrome_options.add_argument('--headless=new') if ENV['HEADLESS'] == 'true'
+  chrome_options.add_option('goog:loggingPrefs', { browser: 'ALL' })
   Capybara.register_driver :chrome do |app|
     driver = Capybara::Selenium::Driver.new(app, browser: :chrome, options: chrome_options)
     driver.browser.manage.window.resize_to(1920, 1080)
@@ -28,7 +29,6 @@ class CapybaraTestCase < Minitest::Test
     driver = Capybara::Selenium::Driver.new(app, browser: :firefox, options: firefox_options)
     driver.browser.manage.window.resize_to(1920, 1080)
     driver.browser.install_addon('../extension/dist/firefox', true)
-    sleep(5) # Give the extension a few seconds to install
     driver
   end
 
@@ -55,10 +55,17 @@ class CapybaraTestCase < Minitest::Test
   end
 
   def teardown
-    # Take a screenshot if the test failed
+    # Take a screenshot and save the page html if the test failed
     timestamp = Time.now.strftime('%Y_%m_%d-%H_%M_%S')
-    filename = "#{name}-#{timestamp}.png"
-    save_screenshot("ci/screenshots/#{filename}") unless passed?
+    filename = "#{name}-#{timestamp}"
+    unless passed?
+      save_screenshot("ci/screenshots/#{filename}.png")
+      File.write("ci/screenshots/#{filename}.html", page.html)
+      if defined?(page.driver.browser.logs)
+        File.write("ci/screenshots/#{filename}-console-logs.log",
+                   page.driver.browser.logs.get(:browser))
+      end
+    end
 
     Capybara.reset_sessions!
     Capybara.use_default_driver

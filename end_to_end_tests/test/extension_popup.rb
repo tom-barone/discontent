@@ -12,6 +12,7 @@ ERROR_SELECTOR = '[data-icon-setting-target="error"]'
 class TestExtensionPopup < CapybaraTestCase
   def prepare(browser)
     Capybara.current_driver = browser
+    sleep(5) # Give the browser some time to load
     visit(extension_popup_url)
   end
 
@@ -115,7 +116,6 @@ class TestExtensionPopup < CapybaraTestCase
       good_icon_input = find(GOOD_ICON_SETTING_SELECTOR)
       controversial_icon_input = find(CONTROVERSIAL_ICON_SETTING_SELECTOR)
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
-      sleep(2) # enough for the open animation to finish
 
       # Set invalid
       good_icon_input.send_keys('gg')

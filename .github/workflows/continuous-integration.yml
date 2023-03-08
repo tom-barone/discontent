@@ -9,6 +9,7 @@ jobs:
   run_tests:
     runs-on: "ubuntu-22.04"
     environment: "test"
+    timeout-minutes: 40
     env:
       LAMBDA_API_URL: "http://localhost:9000/lambda-url/request-handler/v1"
       TABLE_NAME: "Discontent"

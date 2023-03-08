@@ -5,8 +5,6 @@ require_relative '../setup'
 class TestSearchEngines < CapybaraTestCase
   def check_search(domain)
     visit("https://#{domain}=site%3Aen.wikipedia.org")
-    # Do two visits because they sometimes get hung up on the first one
-    visit("https://#{domain}=site%3Aen.wikipedia.org")
     assert_text(:all, /💚 .+/)
     visit("https://#{domain}=site%3Agithub.com")
     assert_text(:all, /🤨 .+/)
@@ -16,7 +14,7 @@ class TestSearchEngines < CapybaraTestCase
 
   def select_driver(browser)
     Capybara.current_driver = browser
-    sleep(1) # wait a second for the browser to load
+    sleep(5) # Give the browser some time to load
   end
 
   %i[chrome firefox].each do |browser|

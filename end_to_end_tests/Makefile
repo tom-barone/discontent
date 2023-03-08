@@ -13,7 +13,7 @@ test: guard-CHROME_EXTENSION_ID guard-FIREFOX_EXTENSION_ID install
 	cd ../backend && $(MAKE) dev
 	@echo "Check that the backend is running"
 	@curl localhost:9000 || (echo "No local backend is running!" && exit 1)
-	mkdir -p ci
+	mkdir -p ci/screenshots
 	bundle exec rake test > ci/test.log
 	cat ci/test.log
 	cd ../backend && $(MAKE) stop
