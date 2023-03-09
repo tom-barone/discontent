@@ -12,6 +12,15 @@ export function identify(hostname: string): SearchEngine | null {
   }
 }
 
+export function isValidHTTPURL(url: string): boolean {
+  try {
+    const url_obj = new URL(url);
+    return url_obj.protocol === "http:" || url_obj.protocol === "https:";
+  } catch (e) {
+    return false;
+  }
+}
+
 class SearchEngine {
   public async getAllLinks(): Promise<SearchEngineLink[]> {
     throw new Error("Not implemented");
@@ -28,7 +37,7 @@ class Google extends SearchEngine {
     Array.from(anchor_tags).forEach((tag) => {
       // All google search results have an h3 tag below them
       const headerElement = tag.querySelector("h3");
-      if (headerElement != null) {
+      if (headerElement != null && isValidHTTPURL(tag.href)) {
         search_links.push(
           // Remove any google referral stuff from the url
           new SearchEngineLink(
@@ -58,7 +67,8 @@ class Bing extends SearchEngine {
         // All bing results have no siblings and a parent h2 element
         if (
           tag.parentElement?.tagName !== "H2" ||
-          tag.parentElement?.children.length !== 1
+          tag.parentElement?.children.length !== 1 ||
+          !isValidHTTPURL(tag.href)
         ) {
           return Promise.reject("Not a bing result");
         }
@@ -110,7 +120,8 @@ class DuckDuckGo extends SearchEngine {
       // DuckDuckGo results are all under h2 tags
       if (
         tag.parentElement?.tagName === "H2" &&
-        tag.parentElement?.children.length === 1
+        tag.parentElement?.children.length === 1 &&
+        isValidHTTPURL(tag.href)
       ) {
         const headerElement = tag.children[0] as HTMLElement;
         if (headerElement != null) {

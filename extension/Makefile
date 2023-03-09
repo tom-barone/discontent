@@ -3,7 +3,7 @@ ifneq (,$(wildcard ../.env))
     export
 endif
 
-WEBPACK_CMD = npx webpack --mode development --config webpack.config.js --env LAMBDA_API_URL=$(LAMBDA_API_URL)
+WEBPACK_CMD := npx webpack --mode development --config webpack.config.js --env LAMBDA_API_URL=$(LAMBDA_API_URL)
 CHROME_VERSION := $(shell jq -r .version src/manifest.chrome.json)
 FIREFOX_VERSION := $(shell jq -r .version src/manifest.firefox.json)
 
@@ -13,7 +13,7 @@ install:
 	npm install
 
 dev: guard-BROWSER
-	$(MAKE) --jobs 2 dev-webpack-watch dev-$(BROWSER)-extension
+	$(MAKE) --jobs=2 dev-webpack-watch dev-$(BROWSER)-extension
 
 build: guard-LAMBDA_API_URL clean install
 	$(WEBPACK_CMD) --env BROWSER=firefox
@@ -34,7 +34,6 @@ dev-webpack-watch: guard-LAMBDA_API_URL guard-BROWSER
 	$(WEBPACK_CMD) --watch --env BROWSER=$(BROWSER)
 
 dev-firefox-extension:
-	# Open up firefox with the extension loaded and two tabs that are helpful for development
 	cd dist/firefox && npx web-ext run --start-url https://www.google.com/search?q=github+en.wikipedia+twitter https://www.bing.com/search?q=github+en.wikipedia+twitter https://duckduckgo.com/?q=github+en.wikipedia+twitter about:debugging
 
 dev-chrome-extension: #build
