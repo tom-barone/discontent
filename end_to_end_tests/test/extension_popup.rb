@@ -12,8 +12,14 @@ ERROR_SELECTOR = '[data-icon-setting-target="error"]'
 class TestExtensionPopup < CapybaraTestCase
   def prepare(browser)
     Capybara.current_driver = browser
+    sleep(5) # Give the browser time to open
+
+    # Create a new window because of tab weirdness and the
+    # extension auto opening the help page
+    new_window = open_new_window
+    switch_to_window new_window
     visit(extension_popup_url)
-    sleep(10) # Give the popup time to register everything
+    sleep(15) # Give the popup time to register everything
   end
 
   def open_settings
