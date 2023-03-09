@@ -2,7 +2,7 @@
 
 <div>
 <a href="https://addons.mozilla.org/addon/discontent" target="_blank"><img height=70 src="docs/assets/button_firefox.png" alt="Get Discontent for Firefox"></img></a>
-<!--<a href="" target="_blank"><img height=70 src="docs/assets/button_chrome.png" alt="Get Discontent for Chrome"></img></a>-->
+<a href="https://chrome.google.com/webstore/detail/discontent/kglbdhongcfkafgfgofpgaehafnbgnhd" target="_blank"><img height=70 src="docs/assets/button_chrome.png" alt="Get Discontent for Chrome"></img></a>
 </div>
 
 This aims to be an open, crowdsourced browser extension to fight garbage content on the web.

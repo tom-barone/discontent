@@ -58,5 +58,46 @@ jobs:
         if: ${{ failure() }}
         uses: "actions/upload-artifact@v3"
         with:
-          name: "failed-tests"
+          name: "failed_tests"
           path: "end_to_end_tests/ci"
+
+  build:
+    needs: ["run_tests"]
+    runs-on: "ubuntu-22.04"
+    environment: "build"
+    env:
+      LAMBDA_API_URL: "https://2zeiy58jgk.execute-api.us-east-1.amazonaws.com/v1"
+      TABLE_NAME: "Discontent"
+      LOG_LEVEL: "info"
+      RANDOMIZE_SCORES: "false"
+      USE_LOCAL_DATABASE: "false"
+      USE_SYSTEM_TIME: "true"
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v3"
+        with:
+          fetch-depth: 0
+
+      - name: "Install poetry"
+        run: "pipx install poetry"
+      - uses: "actions/setup-python@v4"
+        with:
+          python-version: "3.9"
+          cache: "poetry"
+
+      - name: "Set up Homebrew"
+        uses: "Homebrew/actions/setup-homebrew@master"
+
+      - name: "Install cargo-lambda"
+        run: |
+          brew tap cargo-lambda/cargo-lambda
+          brew install cargo-lambda
+
+      - name: "Build extensions and backend"
+        run: "make build"
+
+      - name: "Save built extensions"
+        uses: "actions/upload-artifact@v3"
+        with:
+          name: "packed_extensions"
+          path: "extension/dist/packed"

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Discontent",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Open source extension to fight garbage content on the web",
   "icons": {
     "48": "icons/green_heart-48.png"
