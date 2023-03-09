@@ -57,3 +57,7 @@ The extension itself is written in Typescript. The web API runs off an AWS lambd
 For the nuts and bolts, see the [Architecture](./docs/architecture.md) page.
 
 For instructions on building, testing & developing see the [Contributing](./docs/contributing.md) page.
+
+## Privacy
+
+It's an important thing. Take a look at the [Privacy](./docs/privacy.md) page.
