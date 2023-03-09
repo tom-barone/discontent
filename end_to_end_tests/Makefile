@@ -8,7 +8,7 @@ endif
 install:
 	bundle install
 
-test: guard-CHROME_EXTENSION_ID guard-FIREFOX_EXTENSION_ID install
+test: guard-BROWSERS_TO_TEST guard-CHROME_EXTENSION_ID guard-FIREFOX_EXTENSION_ID install
 	cd ../extension && $(MAKE) build
 	cd ../backend && $(MAKE) dev
 	@echo "Check that the backend is running"

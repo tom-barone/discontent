@@ -18,6 +18,7 @@ jobs:
       USE_LOCAL_DATABASE: "true"
       USE_SYSTEM_TIME: "false"
       HEADLESS: "true"
+      BROWSERS_TO_TEST: "chrome firefox"
       CHROME_EXTENSION_ID: "kglbdhongcfkafgfgofpgaehafnbgnhd"
       FIREFOX_EXTENSION_ID: "{3f504997-80b7-467d-9d7b-e2fbb6d55e34}"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

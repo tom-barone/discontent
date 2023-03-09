@@ -19,6 +19,7 @@ class CapybaraTestCase < Minitest::Test
   Capybara.register_driver :chrome do |app|
     driver = Capybara::Selenium::Driver.new(app, browser: :chrome, options: chrome_options)
     driver.browser.manage.window.resize_to(1920, 1080)
+    sleep(10)
     driver
   end
 
@@ -29,12 +30,15 @@ class CapybaraTestCase < Minitest::Test
     driver = Capybara::Selenium::Driver.new(app, browser: :firefox, options: firefox_options)
     driver.browser.manage.window.resize_to(1920, 1080)
     driver.browser.install_addon('../extension/dist/firefox', true)
+    sleep(10)
     driver
   end
 
   Capybara.default_driver = :chrome
-  Capybara.default_max_wait_time = 20 # Seconds
+  Capybara.default_max_wait_time = 40 # Seconds
   Capybara.enable_aria_label = true
+
+  BROWSERS_TO_TEST = ENV['BROWSERS_TO_TEST'].split(' ').map(&:to_sym)
 
   def extension_popup_url
     case Capybara.current_driver

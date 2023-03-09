@@ -12,22 +12,24 @@ ERROR_SELECTOR = '[data-icon-setting-target="error"]'
 class TestExtensionPopup < CapybaraTestCase
   def prepare(browser)
     Capybara.current_driver = browser
-    sleep(5) # Give the browser some time to load
     visit(extension_popup_url)
+    sleep(10) # Give the popup time to register everything
   end
 
   def open_settings
+    sleep(5) # enough for the open animation to finish
     click_on('Open settings')
-    sleep(2) # enough for the open animation to finish
+    sleep(5) # enough for the open animation to finish
   end
 
   def close_settings
+    sleep(5) # enough for the open animation to finish
     click_on('Close settings')
-    sleep(2) # enough for the open animation to finish
+    sleep(5) # enough for the open animation to finish
   end
 
   # Run tests for multiple browsers
-  %i[firefox chrome].each do |browser|
+  BROWSERS_TO_TEST.each do |browser|
     define_method("test_#{browser}_the_popup_displays_correctly") do
       prepare(browser)
       assert_text('Discontent')
@@ -154,7 +156,7 @@ class TestExtensionPopup < CapybaraTestCase
     # Run javascript to clear local storage
     # Need to deal with annoying browser / chrome name differences
     page.execute_script('let browser = window.browser || window.chrome; browser.storage.local.clear()')
-    sleep(1)
+    sleep(5)
     super
   end
 end
