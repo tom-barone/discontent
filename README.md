@@ -39,7 +39,7 @@ As an aside, rating platforms like this become useless when they start accepting
 
 ## Configuration
 
-You can change the good / spicy / bad icons in the settings to something custom if you like. Maybe something like this?
+You can change the good / spicy / bad icons in the settings to something custom. Perhaps something like this?
 
 | Setting | Icon |
 | ------- | :--: |
