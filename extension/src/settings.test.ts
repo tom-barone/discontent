@@ -52,7 +52,7 @@ describe("Settings", () => {
     for (let i = 0; i < 3; i++) {
       expect(settings.get_icon("good")).resolves.toEqual("💚");
       expect(settings.get_icon("controversial")).resolves.toEqual("🤨");
-      expect(settings.get_icon("bad")).resolves.toEqual("💢");
+      expect(settings.get_icon("bad")).resolves.toEqual("❌");
     }
   });
 

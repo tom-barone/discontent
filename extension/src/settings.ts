@@ -5,7 +5,7 @@ export type IconName = "good" | "controversial" | "bad";
 export const DEFAULT_ICONS = {
   good: "💚",
   controversial: "🤨",
-  bad: "💢",
+  bad: "❌",
 };
 
 export class Settings {

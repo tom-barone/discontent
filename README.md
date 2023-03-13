@@ -17,15 +17,18 @@ Inspired by my **deep hate** of those AI customer support bots. And immoral SEO 
 
 ## How it works?
 
-- If a website is in the database and it has a bad score, it'll prepend all your links with a 💢.
-  <br/><img height=100 src="docs/assets/reddit-vs-twitter.jpg" alt="Link with angry emoji prepended"></img>
+It's basically a like / dislike system, but for websites.
+
+<img height=200 src="docs/assets/screenshot_good_and_bad_links_cropped.jpg" alt="Links with icons prepended"></img>
+
+- If a website is in the database and it has a bad score, it'll prepend all your links with a ❌.
 - If it's spicy and there's lots of votes both ways, you see a 🤨.
 - If it's awesome and deserves to be cherished, you see a 💚.
 - When there aren't enough ratings, nothing will show up.
 
 💚 When you find a site that is a beautiful smiling breath of fresh air; use the extension popup to vote and share your love.
 
-💢 When you find a site that kicks down your door, calls you stupid and holds out its greasy hand demanding ad revenue; use the popup to warn the next bloke.
+❌ When you find a site that kicks down your door, calls you stupid and holds out its greasy hand demanding ad revenue; use the popup to warn the next bloke.
 
 To get things off the ground, I've used the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news). I've gone back a year and taken the best 30 from each day to build a set of good links, hopefully that's a good starting point.
 

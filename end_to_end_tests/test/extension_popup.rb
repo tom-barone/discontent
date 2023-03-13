@@ -44,7 +44,7 @@ class TestExtensionPopup < CapybaraTestCase
       assert_button('Upvote button')
       assert_button('Downvote button')
       assert_equal find_button('Upvote button').text.strip, '💚'
-      assert_equal find_button('Downvote button').text.strip, '💢'
+      assert_equal find_button('Downvote button').text.strip, '❌'
     end
 
     define_method("test_#{browser}_can_show_and_hide_the_settings_page") do
@@ -61,7 +61,7 @@ class TestExtensionPopup < CapybaraTestCase
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
       assert_equal good_icon_input.value, '💚'
       assert_equal controversial_icon_input.value, '🤨'
-      assert_equal bad_icon_input.value, '💢'
+      assert_equal bad_icon_input.value, '❌'
 
       close_settings
       assert_no_text('Settings')
@@ -80,7 +80,7 @@ class TestExtensionPopup < CapybaraTestCase
       bad_icon_input = find(BAD_ICON_SETTING_SELECTOR)
       assert_equal good_icon_input.value, '💚'
       assert_equal controversial_icon_input.value, '🤨'
-      assert_equal bad_icon_input.value, '💢'
+      assert_equal bad_icon_input.value, '❌'
 
       # Set new icons
       good_icon_input.set('g')
@@ -112,10 +112,10 @@ class TestExtensionPopup < CapybaraTestCase
 
       assert_equal good_icon_input.value, '💚'
       assert_equal controversial_icon_input.value, '🤨'
-      assert_equal bad_icon_input.value, '💢'
+      assert_equal bad_icon_input.value, '❌'
       close_settings
       assert_equal find_button('Upvote button').text.strip, '💚'
-      assert_equal find_button('Downvote button').text.strip, '💢'
+      assert_equal find_button('Downvote button').text.strip, '❌'
     end
 
     define_method("test_#{browser}_setting_the_vote_icons_to_invalid_values") do

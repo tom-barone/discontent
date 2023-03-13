@@ -12,7 +12,7 @@ class TestSearchEngines < CapybaraTestCase
     assert_text(:all, /🤨 .+/)
     visit("https://#{domain}=site%3Atwitter.com")
     refresh
-    assert_text(:all, /💢 .+/)
+    assert_text(:all, /❌ .+/)
   end
 
   def prepare(browser)
