@@ -1,9 +1,15 @@
 # 💚 Discontent
 
 <div>
-<a href="https://addons.mozilla.org/addon/discontent" target="_blank"><img height=70 src="docs/assets/button_firefox.png" alt="Get Discontent for Firefox"></img></a>
 <a href="https://chrome.google.com/webstore/detail/discontent/kglbdhongcfkafgfgofpgaehafnbgnhd" target="_blank"><img height=70 src="docs/assets/button_chrome.png" alt="Get Discontent for Chrome"></img></a>
+<a href="https://addons.mozilla.org/addon/discontent" target="_blank"><img height=70 src="docs/assets/button_firefox.png" alt="Get Discontent for Firefox"></img></a>
 </div>
+
+
+![Chrome Web Store](https://img.shields.io/chrome-web-store/users/kglbdhongcfkafgfgofpgaehafnbgnhd?label=Chrome%20users&color=blue)
+![Mozilla Add-on](https://img.shields.io/amo/users/discontent?label=Firefox%20users&color=blue)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/stars/kglbdhongcfkafgfgofpgaehafnbgnhd?label=Chrome%20rating)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/tom-barone/Discontent/continuous-integration.yml?label=Build)
 
 This aims to be an open, crowdsourced browser extension to fight garbage content on the web.
 
