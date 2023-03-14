@@ -24,3 +24,4 @@ seed/
 __pycache__/
 docker/
 ci/
+tmp/

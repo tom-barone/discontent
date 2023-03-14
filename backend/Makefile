@@ -30,22 +30,37 @@ test:
 	$(MAKE) stop
 
 deploy: build
-	sam deploy
+	sam deploy --config-file samconfig.production.toml --template-file template.production.yaml
+
+deploy-dev: build
+	sam deploy --config-file samconfig.development.toml --template-file template.development.yaml
 
 clean: stop-local-database
-	rm -rf __pycache__ .pytest_cache
+	rm -rf __pycache__ .pytest_cache tmp
 
 redeploy:
 	sam delete
 	$(MAKE) deploy
 
-seed: install seed/hacker_news_submissions
-	poetry run python database.py generate_production_seed_data --input_files="seed/hacker_news_submissions/submissions_*.csv" --output="seed/seed.ion"
+seed: install seed/hacker_news_submissions seed/public_blocklists
+	poetry run python database.py generate_production_seed_data
 	@echo "Upload generated seed data to s3"
 	aws s3 cp seed/seed.ion s3://discontent-seed-bucket/seed.ion
 	@echo "When deploying a new CloudFormation stack, the database will be loaded with this seed data"
 
 # Secondary targets
+
+seed/public_blocklists:
+	mkdir -p seed/public_blocklists
+	curl https://raw.githubusercontent.com/arosh/ublacklist-github-translation/master/uBlacklist.txt -o seed/public_blocklists/github_splogs.txt
+	curl https://raw.githubusercontent.com/arosh/ublacklist-stackoverflow-translation/master/uBlacklist.txt -o seed/public_blocklists/stack_overflow_translations.txt
+	curl https://raw.githubusercontent.com/franga2000/aliexpress-fake-sites/main/domains_uBlacklist.txt -o seed/public_blocklists/fake_webstores.txt
+	curl https://raw.githubusercontent.com/wdmpa/content-farm-list/main/uBlacklist.txt -o seed/public_blocklists/wdmpa_content_farms.txt
+	curl https://danny0838.github.io/content-farm-terminator/files/blocklist/content-farms.txt  -o seed/public_blocklists/danny0838_content_farms.txt
+	curl https://danny0838.github.io/content-farm-terminator/files/blocklist/nearly-content-farms.txt -o seed/public_blocklists/danny0838_nearly_content_farms.txt
+	curl https://danny0838.github.io/content-farm-terminator/files/blocklist/extra-content-farms.txt -o seed/public_blocklists/danny0838_extra_content_farms.txt
+	curl https://danny0838.github.io/content-farm-terminator/files/blocklist/bad-cloners.txt -o seed/public_blocklists/danny0838_bad_cloners.txt
+	aws s3 cp s3://discontent-seed-bucket/bad_sites_still_active.csv seed/bad_sites_still_active.csv 
 
 start-lambda:
 	cd lambda && $(MAKE) dev &

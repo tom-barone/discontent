@@ -79,7 +79,9 @@ Resources:
               - SK
               - count_of_votes
       BillingMode: PAY_PER_REQUEST
-      TableName: Discontent
+      TableName: DiscontentProduction
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
       ImportSourceSpecification:
         InputFormat: ION
         InputCompressionType: NONE

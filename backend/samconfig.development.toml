@@ -1,0 +1,11 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "discontent-development"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1hrien2b75gym"
+s3_prefix = "discontent-development"
+region = "us-east-1"
+confirm_changeset = false
+capabilities = "CAPABILITY_IAM"
+image_repositories = []

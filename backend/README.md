@@ -4,6 +4,14 @@ The file `Database-NoSQLWorkbench-Model.json` should be opened the [NoSQL Workbe
 
 The file `Database-CloudFormation-Model.json` is an export from NoSQL Workbench and is used as the schema for AWS Cloudformation.
 
+# Seeding the database
+
+The problem we're up against is how to get things started?
+
+## Good sites
+
+Hacker News submissions seemed like a decent starting point for building a set of "good sites". See `hacker_news_scraper.py` for a python script that scrapes the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news) and gets the links & upvotes.
+
 # Database
 
 This directory contains python scripts to manage the Discontent DynamoDB.
@@ -25,11 +33,6 @@ poetry run python database.py reset
 - reset: drop and setup
 
 
-1. Scrape the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news) and gets the links & upvotes.
-1. Process the submissions into a CSV format that can be used as input to the Discontent database.
-1. Create and send a bunch of `POST` requests to the Discontent API, using that CSV data.
-
-Hacker News submissions seemed like a decent starting point for Discontent.
 
 ## Requirements
 

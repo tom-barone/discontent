@@ -30,8 +30,6 @@ It's basically a like / dislike system, but for websites.
 
 ❌ When you find a site that kicks down your door, calls you stupid and holds out its greasy hand demanding ad revenue; use the popup to warn the next bloke.
 
-To get things off the ground, I've used the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news). I've gone back a year and taken the best 30 from each day to build a set of good links, hopefully that's a good starting point.
-
 Works for Google, Bing & DuckDuckGo.
 
 ## Motivation
@@ -39,6 +37,12 @@ Works for Google, Bing & DuckDuckGo.
 Historically we relied on the big search engines to filter out the good from the bad, and generally speaking they did a pretty good job. But all this generative AI stuff has them spooked and now we have to wade through a lot of rubbish to find anything half decent.
 
 As an aside, rating platforms like this become useless when they start accepting money in exchange for ratings. My promise is that Discontent will never do this, so don't bother asking.
+
+## Initial Data
+
+To get things off the ground, I've used the [front page submissions list](https://news.ycombinator.com/lists) from [HackerNews](https://news.ycombinator.com/news). I've gone back a year and taken the best 30 from each day to build a set of good links.
+
+There is also some excellent work done by the legends at [uBlacklist](https://iorate.github.io/ublacklist/docs) [[1](https://github.com/arosh/ublacklist-github-translation),[2](https://github.com/arosh/ublacklist-stackoverflow-translation),[3](https://github.com/franga2000/aliexpress-fake-sites)], [Content Farm List](https://github.com/wdmpa/content-farm-list) & [Content Farm Terminator](https://danny0838.github.io/content-farm-terminator/en/). Using those lists I've compiled a set of initial bad links as well.
 
 ## Configuration
 
