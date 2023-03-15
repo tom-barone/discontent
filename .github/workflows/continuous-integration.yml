@@ -9,7 +9,7 @@ jobs:
   run_tests:
     runs-on: "ubuntu-22.04"
     environment: "test"
-    timeout-minutes: 40
+    timeout-minutes: 60
     env:
       LAMBDA_API_URL: "http://localhost:9000/lambda-url/request-handler/v1"
       TABLE_NAME: "DiscontentProduction"
@@ -29,6 +29,19 @@ jobs:
         uses: "actions/checkout@v3"
         with:
           fetch-depth: 0
+
+      - name: 'Scan with SonarCloud'
+        uses: 'SonarSource/sonarcloud-github-action@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+      - name: 'Check SonarCloud results and fail pipeline if failed'
+        run: |
+          sleep 30s # Wait for results to be uploaded
+          GATE_STATUS=$(curl https://sonarcloud.io/api/qualitygates/project_status?projectKey=tom-barone_Discontent --silent | jq .projectStatus.status)
+          echo "Gate status: $GATE_STATUS"
+          [[ $GATE_STATUS != "ERROR" ]] # Will fail if equal to ERROR
 
       - name: "Setup ruby for end to end tests"
         uses: "ruby/setup-ruby@v1"
