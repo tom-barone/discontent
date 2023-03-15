@@ -48,6 +48,8 @@ jobs:
 
       - name: "Install cargo-lambda"
         run: |
+          brew install curl
+          export HOMEBREW_FORCE_BREWED_CURL=1
           brew tap cargo-lambda/cargo-lambda
           brew install cargo-lambda
 
