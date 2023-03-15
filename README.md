@@ -61,6 +61,11 @@ You can change the good / spicy / bad icons in the settings to something custom.
 
 ## Technical
 
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=tom-barone_Discontent&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=tom-barone_Discontent)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=tom-barone_Discontent&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=tom-barone_Discontent)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=tom-barone_Discontent&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=tom-barone_Discontent)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=tom-barone_Discontent&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=tom-barone_Discontent)
+
 When you fire up a search engine, it'll grab a list of all the relevant links on the page, then hit an API asking for their scores.
 When a user submits a vote it stores the vote, the timestamp and a randomly generated UUID for that user. No other user data is stored.
 
