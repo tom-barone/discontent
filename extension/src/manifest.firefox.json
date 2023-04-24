@@ -1,13 +1,13 @@
 {
   "manifest_version": 2,
   "name": "Discontent",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Open source extension to fight garbage content on the web",
   "icons": {
     "48": "icons/green_heart-48.png"
   },
   "permissions": [
-		"tabs",
+    "tabs",
     "storage"
   ],
   "browser_action": {
@@ -209,7 +209,9 @@
         "*://*.google.co.zw/*",
         "*://*.google.cat/*",
         "*://*.bing.com/*",
-        "*://duckduckgo.com/*"
+        "*://duckduckgo.com/*",
+        "*://*.duckduckgo.com/*",
+        "*://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/*"
       ],
       "js": [
         "content_scripts/index.js"

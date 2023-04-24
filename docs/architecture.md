@@ -182,3 +182,9 @@ sequenceDiagram
     deactivate Database
     deactivate API
 ```
+
+# Testing
+
+Some manual tests are required right now:
+
+- Check that everything works on the Tor browser for the [DuckDuckGo onion site](https://duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion/)

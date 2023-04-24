@@ -5,7 +5,13 @@ export function identify(hostname: string): SearchEngine | null {
     return new Google();
   } else if (hostname.includes("www.bing.")) {
     return new Bing();
-  } else if (hostname.includes("duckduckgo.com")) {
+  } else if (
+    hostname.includes("duckduckgo.com") ||
+    hostname.includes(
+      // The onion version of DuckDuckGo
+      "duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion"
+    )
+  ) {
     return new DuckDuckGo();
   } else {
     return null;
@@ -123,16 +129,32 @@ class DuckDuckGo extends SearchEngine {
         tag.parentElement?.children.length === 1 &&
         isValidHTTPURL(tag.href)
       ) {
-        const headerElement = tag.children[0] as HTMLElement;
+        // For the header element:
+        // The HTML version of DDG (html.duckduckgo.com) uses the <a> tag itself
+        // The regular version uses a child <span> of the <a> tag
+        let headerElement: HTMLElement;
+        if (window.location.hostname.includes("html.duckduckgo.com")) {
+          headerElement = tag;
+        } else {
+          headerElement = tag.children[0] as HTMLElement;
+        }
         if (headerElement != null) {
           search_links.push(
-            // Remove any google referral stuff from the url
-            new SearchEngineLink(tag.href, headerElement)
+            new SearchEngineLink(
+              this.removeDuckDuckGoReferral(tag.href),
+              headerElement
+            )
           );
         }
       }
     });
     return Promise.resolve(search_links);
+  }
+
+  private removeDuckDuckGoReferral(url: string): string {
+    const url_obj = new URL(url);
+    const params = new URLSearchParams(url_obj.search);
+    return params.get("uddg") ?? url;
   }
 }
 

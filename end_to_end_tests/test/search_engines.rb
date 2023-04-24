@@ -43,6 +43,7 @@ class TestSearchEngines < CapybaraTestCase
       prepare(browser)
       # DuckDuckGo
       check_search('duckduckgo.com/?q')
+      check_search('html.duckduckgo.com/html/?q')
     end
   end
 end

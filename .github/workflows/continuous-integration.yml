@@ -82,7 +82,7 @@ jobs:
     environment: "build"
     env:
       LAMBDA_API_URL: "https://2zeiy58jgk.execute-api.us-east-1.amazonaws.com/v1"
-      TABLE_NAME: "Discontent"
+      TABLE_NAME: "DiscontentProduction"
       LOG_LEVEL: "info"
       RANDOMIZE_SCORES: "false"
       USE_LOCAL_DATABASE: "false"
