@@ -17,9 +17,12 @@ browser.runtime.onMessage.addListener(
   }
 );
 
-browser.runtime.onInstalled.addListener(function () {
-  // Open the help page
-  browser.tabs.create({
-    url: browser.runtime.getURL("/help/help.html"),
-  });
+// Display the help page when newly installed
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    // Open the help page
+    browser.tabs.create({
+      url: browser.runtime.getURL("/help/help.html"),
+    });
+  }
 });
