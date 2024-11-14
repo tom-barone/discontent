@@ -9,7 +9,7 @@ export function identify(hostname: string): SearchEngine | null {
     hostname.includes("duckduckgo.com") ||
     hostname.includes(
       // The onion version of DuckDuckGo
-      "duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion"
+      "duckduckgogg42xjoc72x3sjasowoarfbgcmvfimaftt6twagswzczad.onion",
     )
   ) {
     return new DuckDuckGo();
@@ -48,8 +48,8 @@ class Google extends SearchEngine {
           // Remove any google referral stuff from the url
           new SearchEngineLink(
             this.removeGoogleReferral(tag.href),
-            headerElement
-          )
+            headerElement,
+          ),
         );
       }
     });
@@ -84,11 +84,11 @@ class Bing extends SearchEngine {
         // 	chrome:  https://en.wikipedia.org/wiki/GitHub
         if (tag.href.includes("www.bing.com/ck")) {
           return this.fetchLinkFromBingReferral(tag.href).then(
-            (link) => new SearchEngineLink(link, tag)
+            (link) => new SearchEngineLink(link, tag),
           );
         }
         return Promise.resolve(new SearchEngineLink(tag.href, tag));
-      })
+      }),
     ).then((results) => {
       return results.reduce((acc, result) => {
         if (result.status === "fulfilled") {
@@ -100,7 +100,7 @@ class Bing extends SearchEngine {
   }
 
   private async fetchLinkFromBingReferral(
-    referral_url: string
+    referral_url: string,
   ): Promise<string> {
     return await fetch(referral_url)
       .then((response) => response.text())
@@ -119,6 +119,8 @@ class Bing extends SearchEngine {
 
 class DuckDuckGo extends SearchEngine {
   public async getAllLinks(): Promise<SearchEngineLink[]> {
+		// TODO: Fix this hack and find a way to properly wait for DDG page links to load
+		await new Promise((resolve) => setTimeout(resolve, 1000));
     // Get all the anchor tags on the page
     const anchor_tags = document.getElementsByTagName("a");
     const search_links: SearchEngineLink[] = [];
@@ -142,8 +144,8 @@ class DuckDuckGo extends SearchEngine {
           search_links.push(
             new SearchEngineLink(
               this.removeDuckDuckGoReferral(tag.href),
-              headerElement
-            )
+              headerElement,
+            ),
           );
         }
       }

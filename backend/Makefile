@@ -8,7 +8,7 @@ endif
 install:
 	poetry install
 
-dev: start
+dev: install start
 	poetry run python database.py load_development_votes
 
 start: build stop start-local-database start-lambda

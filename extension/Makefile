@@ -12,7 +12,7 @@ FIREFOX_VERSION := $(shell jq -r .version src/manifest.firefox.json)
 install:
 	npm install
 
-dev: guard-BROWSER
+dev: install guard-BROWSER
 	$(MAKE) --jobs=2 dev-webpack-watch dev-$(BROWSER)-extension
 
 build: guard-LAMBDA_API_URL clean install

@@ -11,6 +11,7 @@ dev: guard-TABLE_NAME guard-LOG_LEVEL guard-USE_LOCAL_DATABASE guard-RANDOMIZE_S
 	cargo lambda watch --no-reload
 
 build:
+	pipx install cargo-lambda
 	cargo build
 	cargo lambda build --release --arm64
 

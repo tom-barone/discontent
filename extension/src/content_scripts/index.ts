@@ -10,7 +10,8 @@ import { Settings } from "../settings";
  * 	 4. Send the links to the background script and request their scores
  * 	 5. Add the scores to the links
  */
-window.onload = function () {
+
+function runDiscontent() {
   // Step 1
   if (window.hasRun) {
     return;
@@ -64,4 +65,20 @@ window.onload = function () {
       // TODO: Handle the error somehow
       console.error(error);
     });
+}
+
+if (navigator.userAgent.includes("Firefox")) {
+  document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+      runDiscontent();
+    },
+    false,
+  );
+}
+
+if (navigator.userAgent.includes("Chrome")) {
+  window.onload = function () {
+    runDiscontent();
+  };
 }
